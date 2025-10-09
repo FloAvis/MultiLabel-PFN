@@ -82,8 +82,8 @@ class OneHotAndLinear(nn.Linear):
             Embedded representation of shape (batch_size, sequence_length, embed_dim)
         """
         # Convert indices to one-hot vectors and apply linear projection
-        one_hot = F.one_hot(src.long(), self.num_classes).to(src.dtype)
-        return F.linear(one_hot, self.weight, self.bias)
+        #one_hot = F.one_hot(src.long(), self.num_classes).to(src.dtype)
+        return F.linear(input, self.weight, self.bias)
 
 
 class SkippableLinear(nn.Linear):

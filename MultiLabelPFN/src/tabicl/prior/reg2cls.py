@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 import warnings
+import random
 
 import numpy as np
 import torch
@@ -144,27 +145,6 @@ def permute_classes(input: Tensor) -> Tensor:
 
     return permuted
 
-'''
-class BalancedBinarize(nn.Module):
-    """Binarizes the input based on its median value."""
-
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, input: Tensor) -> Tensor:
-        """
-        Parameters
-        ----------
-        input : Tensor
-            Input of shape (T,).
-
-        Returns
-        -------
-        Tensor
-            Binarized output (0 or 1) of shape (T,).
-        """
-        return (input > torch.median(input)).float()
-'''
 
 class BalancedBinarize(nn.Module):
     """Binarizes the input based on its median value."""
@@ -186,8 +166,34 @@ class BalancedBinarize(nn.Module):
         """
         return (input > torch.median(input, 0)[0]).float()
 
+class MultiLabelAssigner(nn.Module):
+    """Assigns class labels to the labels based on random quantiles for each label."""
 
-'''
+    def __init__(self, min_quan: float = 0.5, max_quan: float = 0.95 ):
+        super().__init__()
+        self.max_quan = max_quan
+        self.min_quan = min_quan
+
+    def forward(self, input: Tensor) -> Tensor:
+        """
+        Parameters
+        ----------
+        input : Tensor
+            Input of shape (T, L).
+
+        Returns
+        -------
+        Tensor
+            Multilabel assigned output (0 or 1) of shape (T, L).
+        """
+
+        #generating random quantiles between min_quantile and max_quantile
+        quan = torch.zeros(input.shape[1]).uniform_(self.min_quan, self.max_quan)
+
+        #assigning classes to labels based on the quantiles for each label
+        return (input > torch.diagonal(torch.quantile(input, quan, dim=0))).float()
+
+
 class MulticlassAssigner(nn.Module):
     """Transforms the input into discrete classes using rank-based or value-based thresholding.
 
@@ -253,90 +259,6 @@ class MulticlassAssigner(nn.Module):
             classes = self.num_classes - 1 - classes
 
         return classes
-'''
-
-class MulticlassAssigner(nn.Module):
-    """Transforms the input into discrete classes using rank-based or value-based thresholding.
-
-    Input shape: (T,O) -> Output shape: (T,O)
-    """
-
-    def __init__(self, num_classes: int = 2, mode: str = "rank", ordered_prob: float = 0.2):
-        """
-        Initializes the MulticlassAssigner.
-
-        Parameters
-        ----------
-        num_classes : int
-            The target number of discrete classes to output.
-
-        mode : str, default="rank"
-            The method used to determine class boundaries:
-            - "rank": Boundaries are randomly sampled from the input.
-            - "value": Boundaries are randomly sampled from a normal distribution.
-
-        ordered_prob : float, default=0.2
-            Probability of keeping the natural class order.
-        """
-        super().__init__()
-
-        if num_classes < 2:
-            raise ValueError("The number of classes must be at least 2 for MulticlassAssigner.")
-
-        self.num_classes = num_classes
-        self.ordered_prob = ordered_prob
-        self.mode = mode
-
-    def forward(self, input: Tensor) -> Tensor:
-        """
-        Parameters
-        ----------
-        input : Tensor
-            Input of shape (T,O).
-
-        Returns
-        -------
-        Tensor
-            Class labels of shape (T,O) with integer values [0, num_classes-1].
-        """
-
-        T = input.shape[0]
-        device = input.device
-
-
-        if input.ndim == 1:
-            input = input.unsqueeze(-1)
-
-        labels = torch.zeros_like(input)
-
-        for i in range(input.shape[1]):
-
-            tmp_input = input[:,i]
-
-            if self.mode == "rank":
-                boundary_indices = torch.randint(0, T, (self.num_classes - 1,), device=device)
-                boundaries = tmp_input[boundary_indices]
-            elif self.mode == "value":
-                boundaries = torch.randn(self.num_classes - 1, device=device)
-
-            # Compare input tensor with boundaries and sum across the boundary dimension to get classes
-            classes = (tmp_input.unsqueeze(-1) > boundaries.unsqueeze(0)).sum(dim=1)
-
-            # Permute classes
-            if random.random() > self.ordered_prob:
-                classes = permute_classes(classes)
-
-            # Reverse classes
-            if random.random() > 0.5:
-                classes = self.num_classes - 1 - classes
-
-            labels[:,i] = classes
-
-        if input.shape[1] == 1:
-            labels = labels.squeeze(-1)
-
-        return labels
-
 
 class Reg2Cls(nn.Module):
     """Transforms a single regression dataset (features X, targets y) into a classification format
@@ -348,7 +270,7 @@ class Reg2Cls(nn.Module):
     hyperparameters : dict
         Configuration dictionary containing settings for feature processing and
         target transformation. Expected keys include:
-        - num_classes (int): Number of classes for classification conversion.
+        - num_labels (int): Number of labels for classification conversion.
         - max_features (int): Maximum number of features allowed (defines output feature dim).
         - multiclass_type (str): Strategy for multiclass conversion ('rank' or 'value').
         - balanced (bool): Whether to enforce balanced classes (currently only for binary).
@@ -366,58 +288,25 @@ class Reg2Cls(nn.Module):
 
     class_assigner : nn.Module or None
         The module responsible for converting regression targets to class labels.
-        None if num_classes is 0.
+        None if num_labels is 0.
     """
 
     def __init__(self, hp: dict):
         super().__init__()
         self.hp = hp
 
-        num_classes = self.hp["num_classes"]
-        if num_classes == 0:
-            self.class_assigner = None
-        #elif num_classes == 2 and self.hp.get("balanced", False):
-        #    self.class_assigner = BalancedBinarize()
-        elif num_classes > 0:
-            self.class_assigner = MulticlassAssigner(
-                mode=self.hp["multiclass_type"], ordered_prob=self.hp["multiclass_ordered_prob"]
-            )
+        num_labels = self.hp["num_outputs"]
+
+        # Only one Label using TabICL base function
+        if num_labels == 1:
+            self.class_assigner = BalancedBinarize()
+        # For multilabel using multilabel assigner
         else:
-            raise ValueError(f"Invalid number of classes: {num_classes}")
+            self.class_assigner = MultiLabelAssigner(
+                min_quan=hp["min_quan"], max_quan=hp["max_quan"]
+            )
 
-    """
-    def forward(self, X: Tensor, y: Tensor) -> tuple[Tensor, Tensor]:
-        Processes a single dataset (X, y) according to the initialized hyperparameters.
 
-        Parameters
-        ----------
-        X : Tensor
-            Features of shape (T, H), where H is the number of features.
-
-        y : Tensor
-            Targets of shape (T,).
-
-        Returns
-        -------
-        tuple[Tensor, Tensor]
-            A tuple containing:
-            - Processed features of shape (T, max_features).
-            - Processed targets of shape (T,).
-
-        if X.ndim != 2 or y.ndim != 1 or X.shape[0] != y.shape[0]:
-            raise ValueError(f"Input shapes mismatch or incorrect dims. X: {X.shape}, y: {y.shape}")
-
-        X = self._num2cat(X)
-        X = self._process_features(X)
-
-        y = standard_scaling(y.unsqueeze(-1)).squeeze(-1)
-        if self.class_assigner is not None:
-            y = self.class_assigner(y)
-            if self.hp.get("permute_labels", True):
-                y = permute_classes(y)
-
-        return X.float(), y.float()
-    """
 
     def forward(self, X: Tensor, y: Tensor) -> tuple[Tensor, Tensor]:
         """
@@ -429,14 +318,14 @@ class Reg2Cls(nn.Module):
             Features of shape (T, H), where H is the number of features.
 
         y : Tensor
-            Targets of shape (T,).
+            Targets of shape (T,L), where L is the number of labels.
 
         Returns
         -------
         tuple[Tensor, Tensor]
             A tuple containing:
             - Processed features of shape (T, max_features).
-            - Processed targets of shape (T,).
+            - Processed targets of shape (T, max_labels).
         """
 
 
@@ -446,21 +335,17 @@ class Reg2Cls(nn.Module):
         X = self._num2cat(X)
         X = self._process_features(X)
 
-        #print(y)
-
+        '''
         if y.ndim == 1:
             y = standard_scaling(y.unsqueeze(-1))
         else:
             y = standard_scaling(y)
+        '''
 
-        #print(y)
 
-        if self.class_assigner is not None:
-            y = self.class_assigner(y)
-            #if self.hp.get("permute_labels", True):
-            #    y = permute_classes(y)
 
-        #print(y)
+        y = self.class_assigner(y)
+
 
         return X.float(), self._process_labels(y).float()
 
@@ -529,46 +414,29 @@ class Reg2Cls(nn.Module):
         return X
 
     def _process_labels(self, y: Tensor) -> Tensor:
-        """Process inputs through outlier removal, shuffling, scaling, and padding to max features.
+        """Process inputs through padding to max labels.
 
         Parameters
         ----------
-        X : Tensor
-            Feature tensor of shape (T, H).
+        y : Tensor
+            Label tensor of shape (T, L).
 
         Returns
         -------
         Tensor
-            Normalized feature tensor (T, H).
+            Normalized label tensor (T, L).
         """
 
         if y.ndim == 1:
             y = y.unsqueeze(-1)
 
-        num_features = y.shape[1]
-        max_features = self.hp["max_classes"]
+        num_labels = y.shape[1]
+        max_labels = self.hp["max_labels"]
 
-        #X = outlier_removing(X, threshold=4)
-        #X = standard_scaling(X)
-
-        # Permute features if specified
-
-        '''
-        if self.hp.get("permute_features", True):
-            perm = torch.randperm(num_features, device=X.device)
-            X = X[:, perm]
-        
-        # Scale by the proportion of features used relative to max features
-        
-        
-        if self.hp.get("scale_by_max_features", False):
-            scaling_factor = num_features / max_features
-            X = X / scaling_factor
-        '''
 
         # Add empty features if needed to match max features
-        if num_features < max_features:
-            y = F.pad(y, (0, max_features - num_features), mode="constant", value=0.0)
+        if num_labels < max_labels:
+            y = F.pad(y, (0, max_labels - num_labels), mode="constant", value=0.0)
 
 
 

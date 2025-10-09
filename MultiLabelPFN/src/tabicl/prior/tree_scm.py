@@ -314,6 +314,11 @@ class TreeSCM(nn.Module):
             X[:] = 0.0
             y[:] = -100.0
 
+        # For multilabel targets a uniform datatyp is necessary which is why the dimesnions stay (T,L)
+        #- T is sequence length
+        # - L is label dimensionality
+
+
         #if self.num_outputs == 1:
         #    y = y.squeeze(-1)
 
