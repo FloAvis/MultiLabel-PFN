@@ -30,6 +30,8 @@ from sklearn.preprocessing import OneHotEncoder
 
 from tabpfn import TabPFNClassifier
 
+from MultiLabelPFN.src.tabicl.sklearn.classifier import TabICLClassifier
+
 from Classifiers import BinaryRelevance as br
 
 
@@ -67,9 +69,11 @@ def main():
 
         #clf = TabPFNClassifier()
 
-        multi_target_pfn = br(TabPFNClassifier, random_state=42)
+        multi_target_pfn = br(TabICLClassifier, random_state=42)
 
-        use_kfold = True
+        use_kfold = False
+
+        print("Run")
 
         folds = 5
 
