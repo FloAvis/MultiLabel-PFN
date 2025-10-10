@@ -4,12 +4,12 @@
 # Generate prior datasets on the fly
 # ----------------------------------
 
-torchrun --standalone --nproc_per_node=1 /path/to/tabicl/train/run.py \
+torchrun --standalone --nproc_per_node=1 ./run.py \
             --wandb_log True \
-            --wandb_project TabICL \
+            --wandb_project MultiLabelTabICL \
             --wandb_name Stage1 \
             --wandb_dir /my/wandb/dir \
-            --wandb_mode online \
+            --wandb_mode offline \
             --device cuda \
             --dtype float32 \
             --np_seed 42 \
@@ -26,7 +26,7 @@ torchrun --standalone --nproc_per_node=1 /path/to/tabicl/train/run.py \
             --batch_size_per_gp 4 \
             --min_features 2 \
             --max_features 100 \
-            --max_classes 10 \
+            --max_labels 10 \
             --max_seq_len 1024 \
             --min_train_size 0.1 \
             --max_train_size 0.9 \
@@ -63,7 +63,7 @@ python /path/to/tabicl/prior/genload.py \
     --prior_type mix_scm \
     --min_features 2 \
     --max_features 100 \
-    --max_classes 10 \
+    --max_labels 10 \
     --max_seq_len 1024 \
     --min_train_size 0.1 \
     --max_train_size 0.9 \

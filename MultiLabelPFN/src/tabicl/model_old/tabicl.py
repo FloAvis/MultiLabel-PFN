@@ -10,10 +10,7 @@ from .inference_config import InferenceConfig
 
 
 class TabICL(nn.Module):
-    """A Tabular In-Context Learning Foundation Model for Mutlilabel
-
-    modified from Qu, Jingang, et al. "Tabicl: A tabular foundation model for in-context learning on large data." arXiv preprint arXiv:2502.05564 (2025).
-
+    """A Tabular In-Context Learning Foundation Model.
 
     TabICL is a transformer-based architecture for in-context learning on tabular data to make
     predictions without fine-tuning. It processes tabular data through three sequential stages:
@@ -22,13 +19,13 @@ class TabICL(nn.Module):
     2. Row-wise interaction captures interactions between features within each row
     3. Dataset-wise in-context learning to learn patterns from labeled examples and make predictions
 
-    For datasets with more than `max_labels` labels, TabICL switches to hierarchical classification
-    to recursively partition labels into subgroups, forming a multi-level classification tree.
+    For datasets with more than `max_classes` classes, TabICL switches to hierarchical classification
+    to recursively partition classes into subgroups, forming a multi-level classification tree.
 
     Parameters
     ----------
-    max_labels : int, default=10
-        Number of labels that the model supports natively. If the number of labels
+    max_classes : int, default=10
+        Number of classes that the model supports natively. If the number of classes
         in the dataset exceeds this value, hierarchical classification is used.
 
     embed_dim : int, default=128
@@ -77,7 +74,7 @@ class TabICL(nn.Module):
 
     def __init__(
         self,
-        max_labels: int = 10,
+        max_classes: int = 10,
         embed_dim: int = 128,
         col_num_blocks: int = 3,
         col_nhead: int = 4,
@@ -94,7 +91,7 @@ class TabICL(nn.Module):
         norm_first: bool = True,
     ):
         super().__init__()
-        self.max_labels = max_labels
+        self.max_classes = max_classes
         self.embed_dim = embed_dim
         self.col_num_blocks = col_num_blocks
         self.col_nhead = col_nhead
@@ -134,9 +131,36 @@ class TabICL(nn.Module):
             norm_first=norm_first,
         )
 
+        #column and rowwise embedders for labels
+        self.col_embedder_lab = ColEmbedding(
+            embed_dim=embed_dim,
+            num_blocks=col_num_blocks,
+            nhead=col_nhead,
+            num_inds=col_num_inds,
+            dim_feedforward=embed_dim * ff_factor,
+            dropout=dropout,
+            activation=activation,
+            norm_first=norm_first,
+            reserve_cls_tokens=row_num_cls,
+        )
+
+        self.row_interactor_lab = RowInteraction(
+            embed_dim=embed_dim,
+            num_blocks=row_num_blocks,
+            nhead=row_nhead,
+            num_cls=row_num_cls,
+            rope_base=row_rope_base,
+            dim_feedforward=embed_dim * ff_factor,
+            dropout=dropout,
+            activation=activation,
+            norm_first=norm_first,
+        )
+
+
+
         icl_dim = embed_dim * row_num_cls  # CLS tokens are concatenated for ICL
         self.icl_predictor = ICLearning(
-            max_labels=max_labels,
+            max_classes=max_classes,
             d_model=icl_dim,
             num_blocks=icl_num_blocks,
             nhead=icl_nhead,
@@ -171,7 +195,7 @@ class TabICL(nn.Module):
         Returns
         -------
         Tensor
-            Raw logits of shape (B, T, max_labels), which will be further handled by the training code.
+            Raw logits of shape (B, T, max_classes), which will be further handled by the training code.
         """
 
         B, T, H = X.shape
@@ -187,8 +211,12 @@ class TabICL(nn.Module):
             self.col_embedder(X, d=d, train_size=None if embed_with_test else train_size), d=d
         )
 
+        representations_labels = self.row_interactor_lab(
+            self.col_embedder_lab(y_train, train_size=None if embed_with_test else train_size)
+        )
+
         # Dataset-wise in-context learning
-        out = self.icl_predictor(representations, y_train=y_train)
+        out = self.icl_predictor(representations, representations_labels, y_train=y_train)
 
         return out
 
@@ -199,6 +227,7 @@ class TabICL(nn.Module):
         feature_shuffles: Optional[List[List[int]]] = None,
         embed_with_test: bool = False,
         return_logits: bool = True,
+        softmax_temperature: float = 0.9,
         inference_config: InferenceConfig = None,
     ) -> Tensor:
         """Column-wise embedding -> row-wise interaction -> dataset-wise in-context learning.
@@ -228,13 +257,16 @@ class TabICL(nn.Module):
         return_logits : bool, default=True
             If True, return raw logits instead of probabilities
 
+        softmax_temperature : float, default=0.9
+            Temperature for the softmax function
+
         inference_config: InferenceConfig
             Inferenece configuration
 
         Returns
         -------
         Tensor
-            Raw logits or probabilities for test samples of shape (B, test_size, num_labels)
+            Raw logits or probabilities for test samples of shape (B, test_size, num_classes)
             where test_size = T - train_size
         """
 
@@ -255,11 +287,24 @@ class TabICL(nn.Module):
             mgr_config=inference_config.ROW_CONFIG,
         )
 
+        # Column-wise embedding -> Row-wise interaction
+        representations_labels = self.row_interactor_lab(
+            self.col_embedder_lab(
+                y_train,
+                train_size=None if embed_with_test else train_size,
+                feature_shuffles=feature_shuffles,
+                mgr_config=inference_config.COL_CONFIG,
+            ),
+            mgr_config=inference_config.ROW_CONFIG,
+        )
+
         # Dataset-wise in-context learning
         out = self.icl_predictor(
             representations,
+            representations_labels,
             y_train=y_train,
             return_logits=return_logits,
+            softmax_temperature=softmax_temperature,
             mgr_config=inference_config.ICL_CONFIG,
         )
 
@@ -316,10 +361,10 @@ class TabICL(nn.Module):
         -------
         Tensor
             For training mode:
-              Raw logits of shape (B, T-train_size, max_labels), which will be further handled by the training code.
+              Raw logits of shape (B, T-train_size, max_classes), which will be further handled by the training code.
 
             For inference mode:
-              Raw logits or probabilities for test samples of shape (B, T-train_size, num_labels).
+              Raw logits or probabilities for test samples of shape (B, T-train_size, num_classes).
         """
 
         if self.training:
@@ -331,6 +376,7 @@ class TabICL(nn.Module):
                 feature_shuffles=feature_shuffles,
                 embed_with_test=embed_with_test,
                 return_logits=return_logits,
+                softmax_temperature=softmax_temperature,
                 inference_config=inference_config,
             )
 

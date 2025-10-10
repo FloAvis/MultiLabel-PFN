@@ -50,7 +50,7 @@ class ClassNode:
         self.y = None
 
 
-class LabelLinear(nn.Linear):
+class OneHotAndLinear(nn.Linear):
     """Combines one-hot encoding and linear projection in a single efficient operation
     to convert categorical indices to embeddings.
 
@@ -74,18 +74,16 @@ class LabelLinear(nn.Linear):
         Parameters
         ----------
         src : Tensor
-            Integer tensor of shape (batch_size, sequence_length, labels) containing label appearances
+            Integer tensor of shape (batch_size, sequence_length) containing category indices
 
         Returns
         -------
         Tensor
             Embedded representation of shape (batch_size, sequence_length, embed_dim)
         """
-
+        # Convert indices to one-hot vectors and apply linear projection
         #one_hot = F.one_hot(src.long(), self.num_classes).to(src.dtype)
-
-        # apply linear projection
-        return F.linear(src, self.weight, self.bias)
+        return F.linear(input, self.weight, self.bias)
 
 
 class SkippableLinear(nn.Linear):

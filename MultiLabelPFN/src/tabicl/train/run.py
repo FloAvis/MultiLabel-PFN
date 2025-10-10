@@ -581,7 +581,7 @@ class Trainer:
             pred = self.model(micro_X, y_train, micro_d)  # (B, test_size, max_classes)
             pred = pred.flatten(end_dim=-2)
             true = y_test.long().flatten()
-            loss = F.cross_entropy(pred, true)
+            loss = F.binary_cross_entropy_with_logits(pred, true)
 
         # Scale loss for gradient accumulation and backpropagate
         scaled_loss = loss / num_micro_batches
