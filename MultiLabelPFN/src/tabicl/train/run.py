@@ -169,7 +169,7 @@ class Trainer:
         """Build and initialize the TabICL model."""
 
         self.model_config = {
-            "max_classes": self.config.max_classes,
+            "max_labels": self.config.max_labels,
             "embed_dim": self.config.embed_dim,
             "col_num_blocks": self.config.col_num_blocks,
             "col_nhead": self.config.col_nhead,
@@ -236,7 +236,7 @@ class Trainer:
                 batch_size_per_gp=self.config.batch_size_per_gp,
                 min_features=self.config.min_features,
                 max_features=self.config.max_features,
-                max_classes=self.config.max_classes,
+                max_labels=self.config.max_labels,
                 min_seq_len=self.config.min_seq_len,
                 max_seq_len=self.config.max_seq_len,
                 log_seq_len=self.config.log_seq_len,
@@ -578,7 +578,7 @@ class Trainer:
             self.model.require_backward_grad_sync = micro_batch_idx == num_micro_batches - 1
 
         with self.amp_ctx:
-            pred = self.model(micro_X, y_train, micro_d)  # (B, test_size, max_classes)
+            pred = self.model(micro_X, y_train, micro_d)  # (B, test_size, max_labels)
             pred = pred.flatten(end_dim=-2)
             true = y_test.long().flatten()
             loss = F.binary_cross_entropy_with_logits(pred, true)
