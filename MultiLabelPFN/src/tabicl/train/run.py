@@ -21,11 +21,11 @@ from torch.distributed import init_process_group, destroy_process_group
 from tqdm import tqdm
 import wandb
 
-from ..model.tabicl import TabICL
-from ..prior.dataset import PriorDataset
-from ..prior.genload import LoadPriorDataset
-from ..train.optim import get_scheduler
-from ..train.train_config import build_parser
+from tabicl import TabICL
+from tabicl.prior.dataset import PriorDataset
+from tabicl.prior.genload import LoadPriorDataset
+from tabicl.train.optim import get_scheduler
+from tabicl.train.train_config import build_parser
 
 warnings.filterwarnings(
     "ignore", message=".*The PyTorch API of nested tensors is in prototype stage.*", category=UserWarning
