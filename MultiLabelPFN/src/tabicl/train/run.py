@@ -579,15 +579,14 @@ class Trainer:
 
         with self.amp_ctx:
             pred = self.model(micro_X, y_train, micro_d)  # (B, test_size, max_labels)
-            #pred = pred.flatten(end_dim=-2)
+            pred = pred.flatten(end_dim=-2)
             #true = y_test.long().flatten()
-            true = y_test.float()
+            true = y_test.float().flatten(end_dim=-2)
             if true.shape == pred.shape:
                 print("True Baby")
 
             loss = F.binary_cross_entropy_with_logits(pred, true)
 
-            true =
 
         # Scale loss for gradient accumulation and backpropagate
         scaled_loss = loss / num_micro_batches
@@ -596,8 +595,8 @@ class Trainer:
         with torch.no_grad():
             micro_results = {}
             micro_results["ce"] = scaled_loss.item()
-            accuracy = (pred.argmax(dim=1) == true).sum() / len(true)
-            micro_results["accuracy"] = accuracy.item() / num_micro_batches
+            exam_accuracy = (((pred > 0).float() == true).sum(dim=-1) / true.shape[-1]).sum() / true.shape[-2]
+            micro_results["exam_accuracy"] = exam_accuracy.item() / num_micro_batches
 
         return micro_results
 
@@ -606,7 +605,7 @@ class Trainer:
         Trains the model on a batch of datasets. Handles gradient accumulation by
         splitting the batch into micro-batches. Supports variable-sized datasets
         by padding. Skips micro-batches on CUDA OOM errors. Updates model
-        parameters and returns loss and accuracy metrics.
+        parameters and returns loss and exam_accuracy metrics.
 
         Parameters
         ----------
@@ -617,7 +616,7 @@ class Trainer:
         Returns
         ------
         dict
-            Dictionary containing 'ce' (cross-entropy loss) and 'accuracy'.
+            Dictionary containing 'ce' (cross-entropy loss) and 'exam_accuracy'.
 
         Raises
         ------
@@ -635,7 +634,7 @@ class Trainer:
         micro_batches = [torch.split(t, self.config.micro_batch_size, dim=0) for t in batch]
         micro_batches = list(zip(*micro_batches))
 
-        results = {"ce": 0.0, "accuracy": 0.0}
+        results = {"ce": 0.0, "exam_accuracy": 0.0}
         failed_batches = 0
 
         for idx, micro_batch in enumerate(micro_batches):
