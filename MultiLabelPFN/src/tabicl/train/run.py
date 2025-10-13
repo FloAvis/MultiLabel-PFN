@@ -587,6 +587,8 @@ class Trainer:
 
             loss = F.binary_cross_entropy_with_logits(pred, true)
 
+            true =
+
         # Scale loss for gradient accumulation and backpropagate
         scaled_loss = loss / num_micro_batches
         self.scaler.scale(scaled_loss).backward()
