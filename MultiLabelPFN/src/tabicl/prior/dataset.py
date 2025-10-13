@@ -657,7 +657,7 @@ class SCMPrior(Prior):
                 # Subgroups share prior type, number of features, and sampled HPs
                 subgp_prior_type = self.get_prior()
                 subgp_num_features = round(np.random.uniform(self.min_features, gp_max_features))
-                #subgp_num_labels = round(np.random.uniform(1, self.max_classes))
+                #subgp_num_labels = round(np.random.uniform(1, self.max_labels))
                 subgp_sampled_hp = {k: v() if callable(v) else v for k, v in group_sampled_hp.items()}
 
                 # Generate parameters for each dataset in this subgroup
@@ -681,7 +681,7 @@ class SCMPrior(Prior):
                         "num_features": subgp_num_features,
                         #removed num_classes as we want to do multilabel prediction which assumes binary classification
                         "device": self.device,
-                        "max_labels":self.max_labels,        #changed max_classes to max_labels for clarity
+                        "max_labels":self.max_labels,        #changed max_labels to max_labels for clarity
                         #quantile range for assignment of classes
                         "min_quan":self.min_quan,
                         "max_quan":self.max_quan,
@@ -756,7 +756,7 @@ class DummyPrior(Prior):
     max_features : int, default=100
         Maximum number of features per dataset
 
-    max_classes : int, default=10
+    max_labels : int, default=10
         Maximum number of target classes
 
     min_seq_len : int, default=None
@@ -785,7 +785,7 @@ class DummyPrior(Prior):
         batch_size: int = 256,
         min_features: int = 2,
         max_features: int = 100,
-        max_classes: int = 10,
+        max_labels: int = 10,
         min_seq_len: Optional[int] = None,
         max_seq_len: int = 1024,
         log_seq_len: bool = False,
@@ -797,7 +797,7 @@ class DummyPrior(Prior):
             batch_size=batch_size,
             min_features=min_features,
             max_features=max_features,
-            max_classes=max_classes,
+            max_labels=max_labels,
             min_seq_len=min_seq_len,
             max_seq_len=max_seq_len,
             log_seq_len=log_seq_len,
@@ -845,7 +845,7 @@ class DummyPrior(Prior):
 
         X = torch.randn(batch_size, seq_len, self.max_features, device=self.device)
 
-        num_classes = np.random.randint(2, self.max_classes + 1)
+        num_classes = np.random.randint(2, self.max_labels + 1)
         y = torch.randint(0, num_classes, (batch_size, seq_len), device=self.device)
 
         d = torch.full((batch_size,), self.max_features, device=self.device)
@@ -877,7 +877,7 @@ class PriorDataset(IterableDataset):
     max_features : int, default=100
         Maximum number of features per dataset
 
-    max_classes : int, default=10
+    max_labels : int, default=10
         Maximum number of target classes
 
     min_seq_len : int, default=None
@@ -937,7 +937,7 @@ class PriorDataset(IterableDataset):
         batch_size_per_subgp: Optional[int] = None,
         min_features: int = 2,
         max_features: int = 100,
-        max_classes: int = 10,
+        max_labels: int = 10,
         min_seq_len: Optional[int] = None,
         max_seq_len: int = 1024,
         log_seq_len: bool = False,
@@ -958,7 +958,7 @@ class PriorDataset(IterableDataset):
                 batch_size=batch_size,
                 min_features=min_features,
                 max_features=max_features,
-                max_classes=max_classes,
+                max_labels=max_labels,
                 min_seq_len=min_seq_len,
                 max_seq_len=max_seq_len,
                 log_seq_len=log_seq_len,
@@ -973,7 +973,7 @@ class PriorDataset(IterableDataset):
                 batch_size_per_subgp=batch_size_per_subgp,
                 min_features=min_features,
                 max_features=max_features,
-                max_classes=max_classes,
+                max_labels=max_labels,
                 min_seq_len=min_seq_len,
                 max_seq_len=max_seq_len,
                 log_seq_len=log_seq_len,
@@ -998,7 +998,7 @@ class PriorDataset(IterableDataset):
         self.batch_size_per_subgp = batch_size_per_subgp or batch_size_per_gp
         self.min_features = min_features
         self.max_features = max_features
-        self.max_classes = max_classes
+        self.max_labels = max_labels
         self.min_seq_len = min_seq_len
         self.max_seq_len = max_seq_len
         self.log_seq_len = log_seq_len
@@ -1082,7 +1082,7 @@ class PriorDataset(IterableDataset):
             f"  batch_size: {self.batch_size}\n"
             f"  batch_size_per_gp: {self.batch_size_per_gp}\n"
             f"  features: {self.min_features} - {self.max_features}\n"
-            f"  max classes: {self.max_classes}\n"
+            f"  max classes: {self.max_labels}\n"
             f"  seq_len: {self.min_seq_len or 'None'} - {self.max_seq_len}\n"
             f"  sequence length varies across groups: {self.seq_len_per_gp}\n"
             f"  train_size: {self.min_train_size} - {self.max_train_size}\n"
