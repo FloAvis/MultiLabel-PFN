@@ -412,7 +412,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
                 f"natively supported by the model. Consider enabling hierarchical classification."
             )
 
-        if self.n_labels_ > self.model_.max_classes and self.verbose:
+        if self.n_labels_ > self.model_.max_labels and self.verbose:
             print(
                 f"The number of classes ({self.n_labels_}) exceeds the max number of classes ({self.model_.max_labels}) "
                 f"natively supported by the model. Therefore, hierarchical classification is used."
