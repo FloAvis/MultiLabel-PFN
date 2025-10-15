@@ -83,7 +83,7 @@ class LabelLinear(nn.Linear):
         """
 
         #one_hot = F.one_hot(src.long(), self.num_classes).to(src.dtype)
-        print(src)
+        print(src.shape)
         # apply linear projection
         return F.linear(src, self.weight, self.bias)
 
