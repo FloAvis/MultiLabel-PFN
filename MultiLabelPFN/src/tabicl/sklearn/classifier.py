@@ -343,7 +343,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         X : array-like of shape (n_samples, n_features)
             Training input data.
 
-        y : array-like of shape (n_samples,)
+        y : array-like of shape (n_samples,n_labels)
             Training target labels.
 
         Returns
@@ -598,11 +598,11 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
 
         Returns
         -------
-        array-like of shape (n_samples,)
+        array-like of shape (n_samples,n_labels)
             Predicted class labels for each test sample.
         """
         proba = self.predict_proba(X)
-        y = np.argmax(proba, axis=1)
+        y = (proba > 0.5).astype(int)
 
         return self.y_encoder_.inverse_transform(y)
 

@@ -15,8 +15,8 @@ import result_handler
 
 # Baseline Imports
 
-from tabpfn import TabPFNClassifier
 
+from MultiLabelPFN.src.tabicl import TabICLClassifier
 
 def main():
 
@@ -29,11 +29,9 @@ def main():
         X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
 
 
-        clf = TabPFNClassifier(random_state=42)
+        multi_target_pfn = TabICLClassifier(model_path="../my/stage1/checkpoint/dir/step-1000.ckpt", allow_auto_download=False, n_jobs=2, verbose=True)
 
-        multi_target_pfn = MultiOutputClassifier(clf, n_jobs=2)
-
-        use_kfold = True
+        use_kfold = False
         folds = 5
 
 
@@ -52,7 +50,7 @@ def main():
             y_test_df = pd.DataFrame(y_test, columns=drugs)
 
 
-            result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_Binary_Relevance_MOC_prediction"))
+            result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL"))
 
 
             y_pred_proba = trained_model_pfn.predict_proba(X_test)
@@ -60,7 +58,7 @@ def main():
 
             result_handler.save_multilabel_proba(y_pred_proba, y_test_df, label=(
                         file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                    0] + "_Binary_Relevance_probabilities_MOC_prediction"))
+                    0] + "_MuLaTabICL_probabilities"))
 
         else:
 

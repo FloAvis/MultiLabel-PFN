@@ -582,8 +582,6 @@ class Trainer:
             pred = pred.flatten(end_dim=-2)
             #true = y_test.long().flatten()
             true = y_test.float().flatten(end_dim=-2)
-            if true.shape == pred.shape:
-                print("True Baby")
 
             loss = F.binary_cross_entropy_with_logits(pred, true)
 
