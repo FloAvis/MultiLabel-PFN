@@ -394,7 +394,7 @@ class ICLearning(nn.Module):
 
         num_labels = y_train.shape[2]
         assert all(
-            len(torch.unique(yi)) == num_labels for yi in y_train
+            yi.shape[1] == num_labels for yi in y_train
         ), "All tables must have the same number of labels"
 
         if num_labels <= self.max_labels:
