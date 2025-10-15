@@ -903,7 +903,7 @@ class EnsembleGenerator(TransformerMixin, BaseEstimator):
         X : array-like of shape (n_samples, n_features)
             Training feature data.
 
-        y : array-like of shape (n_samples,)
+        y : array-like of shape (n_samples,n_labels)
             Training target values.
 
         Returns
@@ -911,7 +911,9 @@ class EnsembleGenerator(TransformerMixin, BaseEstimator):
         self : object
             Fitted generator.
         """
-        self._validate_data(X, y)
+        self._validate_data(X, y, check_params={"multi_output":True})
+
+
 
         if self.norm_methods is None:
             self.norm_methods_ = ["none", "power"]
