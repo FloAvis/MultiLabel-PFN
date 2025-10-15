@@ -213,7 +213,7 @@ class ICLearning(nn.Module):
              - T is the number of samples (rows)
              - D is the dimension of row representations
 
-        y_train : Tensor of shape (B, train_size)
+        y_train : Tensor of shape (B, train_size, label_size)
             Training targets, where train_size is the position to split
             the input into training and test data
         """
