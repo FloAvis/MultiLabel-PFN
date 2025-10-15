@@ -911,7 +911,7 @@ class EnsembleGenerator(TransformerMixin, BaseEstimator):
         self : object
             Fitted generator.
         """
-        self._validate_data(X, y, check_params={"multi_output":True})
+        self._validate_data(X, y, multi_output=True)
 
 
 
