@@ -16,7 +16,7 @@ import result_handler
 # Baseline Imports
 
 
-from tabicl import TabICLClassifier
+from MultiLabelPFN.src.tabicl import TabICLClassifier
 
 def main():
 
