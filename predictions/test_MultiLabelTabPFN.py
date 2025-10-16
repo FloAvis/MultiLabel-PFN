@@ -63,7 +63,7 @@ def main():
 
             print(y_pred_proba)
 
-            result_handler.save_multilabel_proba(y_pred_proba, y_test_df, label=(
+            result_handler.save_multilabel(y_pred_proba, y_test_df, label=(
                         file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
                     0] + "_MuLaTabICL_probabilities"))
 
