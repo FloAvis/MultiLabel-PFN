@@ -63,8 +63,8 @@ class LabelLinear(nn.Linear):
         Output embedding dimension
     """
 
-    def __init__(self, num_labels: int, embed_dim: int):
-        super().__init__(num_labels, embed_dim)
+    def __init__(self,max_labels: int, embed_dim: int):
+        super().__init__(max_labels, embed_dim)
         self.embed_dim = embed_dim
 
     def forward(self, src: Tensor) -> Tensor:
@@ -82,8 +82,9 @@ class LabelLinear(nn.Linear):
         """
 
         #one_hot = F.one_hot(src.long(), self.num_classes).to(src.dtype)
-        print(src.shape)
-        print(self.weight.shape, self.bias.shape)
+        #print(src.shape)
+        #print(self.weight.shape, self.bias.shape)
+        src = F.pad(src, (0, 2))
         # apply linear projection
         return F.linear(src, self.weight, self.bias)
 
