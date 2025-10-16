@@ -52,18 +52,15 @@ def main():
 
 
 
-            print(y_pred_df)
-
-            print(y_test_df)
 
             result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL"))
 
 
             y_pred_proba = trained_model_pfn.predict_proba(X_test)
 
-            print(y_pred_proba)
+            y_pred_proba_df = pd.DataFrame(y_pred_proba, columns=drugs)
 
-            result_handler.save_multilabel(y_pred_proba, y_test_df, label=(
+            result_handler.save_multilabel(y_pred_proba_df, y_test_df, label=(
                         file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
                     0] + "_MuLaTabICL_probabilities"))
 
