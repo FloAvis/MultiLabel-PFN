@@ -31,7 +31,7 @@ def main():
 
         #multi_target_pfn = TabICLClassifier(model_path="../my/stage1/checkpoint/dir/step-1000.ckpt",n_estimators=1, allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
 
-        multi_target_pfn = TabICLClassifier(model_path="../my/", n_estimators=1,
+        multi_target_pfn = TabICLClassifier(model_path="../my/test.ckpt", n_estimators=1,
                                             n_jobs=2, verbose=True, use_hierarchical=False)
 
         use_kfold = False
