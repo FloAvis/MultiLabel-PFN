@@ -29,7 +29,10 @@ def main():
         X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
 
 
-        multi_target_pfn = TabICLClassifier(model_path="../my/stage1/checkpoint/dir/step-1000.ckpt",n_estimators=1, allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
+        #multi_target_pfn = TabICLClassifier(model_path="../my/stage1/checkpoint/dir/step-1000.ckpt",n_estimators=1, allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
+
+        multi_target_pfn = TabICLClassifier(model_path="../my/", n_estimators=1,
+                                            n_jobs=2, verbose=True, use_hierarchical=False)
 
         use_kfold = False
         folds = 5
@@ -53,7 +56,7 @@ def main():
 
 
 
-            result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL"))
+            result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL_orig_model"))
 
 
             y_pred_proba = trained_model_pfn.predict_proba(X_test)
@@ -62,7 +65,7 @@ def main():
 
             result_handler.save_multilabel(y_pred_proba_df, y_test_df, label=(
                         file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                    0] + "_MuLaTabICL_probabilities"))
+                    0] + "_MuLaTabICL_probabilities_orig_model"))
 
         else:
 
