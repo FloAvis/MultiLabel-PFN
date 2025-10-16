@@ -78,6 +78,7 @@ class TabICL(nn.Module):
     def __init__(
         self,
         max_labels: int = 10,
+        max_classes: int = None,
         embed_dim: int = 128,
         col_num_blocks: int = 3,
         col_nhead: int = 4,
@@ -95,6 +96,10 @@ class TabICL(nn.Module):
     ):
         super().__init__()
         self.max_labels = max_labels
+
+        if max_classes is not None:
+            self.max_labels = max_classes
+
         self.embed_dim = embed_dim
         self.col_num_blocks = col_num_blocks
         self.col_nhead = col_nhead
