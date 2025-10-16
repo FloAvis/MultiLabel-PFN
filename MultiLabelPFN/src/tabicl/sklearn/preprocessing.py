@@ -932,7 +932,7 @@ class EnsembleGenerator(TransformerMixin, BaseEstimator):
 
         # override n_features_in_ to account for unique feature filtering
         self.n_features_in_ = X.shape[1]
-        self.n_classes_ = len(np.unique(y))
+        self.n_labels_ = y.shape[1]
 
         self.rng_ = random.Random(self.random_state)
         self.ensemble_configs_, self.feature_shuffle_patterns_, self.class_shift_offsets_ = self._generate_ensemble()
@@ -968,7 +968,7 @@ class EnsembleGenerator(TransformerMixin, BaseEstimator):
         shuffle_patterns = shuffler.shuffle(self.n_estimators)
 
         if self.class_shift and self.n_estimators > 1:
-            shift_offsets = self.rng_.sample(range(self.n_classes_), self.n_classes_)
+            shift_offsets = self.rng_.sample(range(self.n_labels_), self.n_labels_)
         else:
             shift_offsets = [0]
 
@@ -1034,7 +1034,7 @@ class EnsembleGenerator(TransformerMixin, BaseEstimator):
             y_ensemble = []
             for shuffle_pattern, shift_offset in shuffle_shift_configs:
                 X_ensemble.append(X_variant[:, shuffle_pattern])
-                y_ensemble.append((y + shift_offset) % self.n_classes_)
+                y_ensemble.append((y + shift_offset) % self.n_labels_)
             data[norm_method] = (np.stack(X_ensemble, axis=0), np.stack(y_ensemble, axis=0))
 
         return data
