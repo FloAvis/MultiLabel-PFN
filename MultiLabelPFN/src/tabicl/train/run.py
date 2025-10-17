@@ -207,10 +207,9 @@ class Trainer:
         if self.config.freeze_icl:
             for name, param in model.named_parameters():
                 if param.requires_grad:
-                    print(name, param.data)
+                    print(name)
             model.icl_predictor.eval()
             for param in model.icl_predictor.parameters():
-                print(param)
                 param.requires_grad = False
 
         # Compile model if requested
