@@ -212,7 +212,7 @@ class Trainer:
                     print(name)
             print("Named: ", named)
             all = 0
-            model.icl_predictor.eval()
+            #model.icl_predictor.eval()
             for param in model.icl_predictor.parameters():
                 all += 1
                 param.requires_grad = False
