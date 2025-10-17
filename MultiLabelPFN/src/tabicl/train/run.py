@@ -205,23 +205,15 @@ class Trainer:
                 param.requires_grad = False
 
         if self.config.freeze_icl:
-            named_grad = 0
-            named_not_grad = 0
-            for name, param in model.named_parameters():
-                if param.requires_grad:
-                    named_grad += 1
-                    print("Req_grad: ", name)
-                else:
-                    named_not_grad += 1
-                    print("not_grad: ", name)
-            print("Named grad : ", named_grad)
-            print("Named not grad : ", named_not_grad)
-            all = 0
-            #model.icl_predictor.eval()
+            model.icl_predictor.eval()
             for param in model.icl_predictor.parameters():
-                all += 1
                 param.requires_grad = False
-            print("All: ", all)
+
+
+        if self.config.freeze_icl_finetune:
+            model.icl_predictor.tf_icl.eval()
+            for param in model.icl_predictor.tf_icl.parameters():
+                param.requires_grad = False
 
         '''
         if self.config.freeze_icl_finetune:
