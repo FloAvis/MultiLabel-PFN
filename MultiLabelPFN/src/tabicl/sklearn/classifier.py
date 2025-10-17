@@ -18,9 +18,18 @@ from huggingface_hub import hf_hub_download
 from huggingface_hub.utils import LocalEntryNotFoundError
 
 from .preprocessing import TransformToNumerical, EnsembleGenerator
-from MultiLabelPFN.src.tabicl import InferenceConfig
-from MultiLabelPFN.src.tabicl import TabICL
 
+try:
+    from MultiLabelPFN.src.tabicl import InferenceConfig
+    from MultiLabelPFN.src.tabicl import TabICL
+except:
+    print("Not able to import from MultiLanelPFN, bad path")
+
+try:
+    from tabicl import InferenceConfig
+    from tabicl import TabICL
+except:
+    print("Not able to import, bad path")
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn")
 OLD_SKLEARN = version.parse(sklearn.__version__) < version.parse("1.6")

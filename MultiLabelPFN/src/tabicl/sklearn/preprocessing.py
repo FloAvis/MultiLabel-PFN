@@ -1035,10 +1035,6 @@ class EnsembleGenerator(TransformerMixin, BaseEstimator):
             for shuffle_pattern, shift_offset in shuffle_shift_configs:
                 X_ensemble.append(X_variant[:, shuffle_pattern])
                 y_ensemble.append((y + shift_offset) % self.n_labels_)
-                print(y)
-                print(shift_offset)
-                print((y + shift_offset) % self.n_labels_)
-                print(y_ensemble)
             data[norm_method] = (np.stack(X_ensemble, axis=0), np.stack(y_ensemble, axis=0))
 
         return data

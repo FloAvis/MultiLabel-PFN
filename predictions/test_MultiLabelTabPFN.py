@@ -31,7 +31,7 @@ def main():
 
         #multi_target_pfn = TabICLClassifier(model_path="../my/stage1/checkpoint/dir/step-1000.ckpt",n_estimators=1, allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
 
-        multi_target_pfn = TabICLClassifier(checkpoint_version="tabicl-classifier-v1.1-0506.ckpt", n_estimators=1,
+        multi_target_pfn = TabICLClassifier(checkpoint_version="tananobicl-classifier-v1.1-0506.ckpt", n_estimators=1,
                                             n_jobs=2, verbose=True, use_hierarchical=False)
 
         use_kfold = False
@@ -42,7 +42,7 @@ def main():
 
             X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
 
-            print("y_test: ", y_test.shape)
+            #print("y_test: ", y_test.shape)
 
             trained_model_pfn = multi_target_pfn.fit(X_train, y_train)
 
