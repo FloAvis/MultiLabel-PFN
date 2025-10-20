@@ -79,7 +79,7 @@ def main():
 
             df_y_true = pd.DataFrame(y_true, columns=drugs)
 
-            y_pred_new = (y_pred[..., 1] >= 0.5) * 1.0
+            y_pred_new = (y_pred >= 0.5) * 1.0
 
             print(y_pred_new.shape)
 

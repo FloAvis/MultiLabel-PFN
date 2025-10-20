@@ -191,7 +191,6 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
 
     X_arr = np.array(X)
     Y_arr = np.array(Y)
-    predict_proba_classSelect = True
 
     counter = 0
     for train_idx, test_idx in cv.split(X):
@@ -212,9 +211,8 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
 
             if method == "predict_proba" and len(y_pred_tmp.shape) == 2:
                 y_pred_tmp_tmp = np.zeros((y_pred_tmp.shape[0], y_pred_tmp.shape[1], 2))
-                y_pred_tmp_tmp[:,:,0] = y_pred_tmp
+                y_pred_tmp_tmp[:,:,1] = y_pred_tmp
                 y_pred_tmp = y_pred_tmp_tmp
-                predict_proba_classSelect = False
 
 
             if y_pred[test_idx].shape != np.array(y_pred_tmp).shape:
@@ -237,7 +235,7 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
                 y_pred[:,test_idx] = model.predict_proba(X_arr[test_idx])
                 y_true[:,test_idx] = Y_arr[test_idx]
 
-    if method == "predict_proba" and predict_proba_classSelect:
+    if method == "predict_proba":
         y_pred = y_pred[..., 1]
 
     return y_pred, y_true
