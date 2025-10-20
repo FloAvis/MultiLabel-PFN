@@ -90,10 +90,9 @@ def main():
 
 
 
-            result_handler.save_multilabel_proba(y_pred, df_y_true, k_folds=kfolds, label=(
+            result_handler.save_multilabel_proba(np.stack(y_pred, axis=1), df_y_true, k_folds=kfolds, label=(
                     file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
                 0] + "_MuLaTabICL_random_step1_probabilities_"+ str(folds) + "_fold"))
-
 
 
 
