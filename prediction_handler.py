@@ -177,11 +177,13 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
             y_pred = np.zeros((model.n_jobs, X.shape[0], Y.shape[1]))  # (n_samples, n_labels, n_classes)
             y_true = np.zeros((model.n_jobs, X.shape[0], Y.shape[1]))  # (n_samples, n_labels, n_classes)
 
+    #print(method)
+
     elif method == "predict_proba":
-        if method == "single":
+        if mode == "single":
             y_pred = np.zeros((X.shape[0], Y.shape[1], 2))
             y_true = np.zeros((X.shape[0], Y.shape[1]))  # (n_samples, n_labels, n_classes)
-        elif method == "ensemble":
+        elif mode == "ensemble":
             y_pred = np.zeros((model.n_jobs, X.shape[0], Y.shape[1], 2))  # (n_jobs, n_samples, n_labels, n_classes)
             y_true = np.zeros((model.n_jobs, X.shape[0], Y.shape[1]))  # (n_jobs, n_samples, n_labels, n_classes)
 
@@ -194,9 +196,6 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
     for train_idx, test_idx in cv.split(X):
         counter += 1
         print("CV {}".format(counter))
-
-        print(X_arr[train_idx])
-        print(Y_arr[train_idx])
 
         model.fit(pd.DataFrame(X_arr[train_idx]), pd.DataFrame(Y_arr[train_idx]))
 
