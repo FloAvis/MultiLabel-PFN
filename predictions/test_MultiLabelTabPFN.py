@@ -29,12 +29,12 @@ def main():
         X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
 
 
-        multi_target_pfn = TabICLClassifier(model_path="../my/step-2000.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
+        multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
 
         #multi_target_pfn = TabICLClassifier(model_path="../my/tabicl-classifier-v1.1-0506.ckpt", checkpoint_version="tabicl-classifier-v1.1-0506.ckpt", n_estimators=1,
         #                                    n_jobs=2, verbose=True, use_hierarchical=False)
 
-        use_kfold = True
+        use_kfold = False
         folds = 5
 
 
@@ -56,7 +56,7 @@ def main():
 
 
 
-            result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL_finetune_step2000"))
+            result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL_random_step1"))
 
 
             y_pred_proba = trained_model_pfn.predict_proba(X_test)
@@ -65,7 +65,7 @@ def main():
 
             result_handler.save_multilabel(y_pred_proba_df, y_test_df, label=(
                         file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                    0] + "_MuLaTabICL_probabilities_finetune_step2000"))
+                    0] + "_MuLaTabICL_probabilities_random_step1"))
 
         else:
 
@@ -90,7 +90,7 @@ def main():
 
 
 
-            result_handler.save_multilabel_proba(np.stack(y_pred, axis=1), df_y_true, k_folds=kfolds, label=(
+            result_handler.save_multilabel_proba(y_pred, df_y_true, k_folds=kfolds, label=(
                     file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
                 0] + "_MuLaTabICL_finetune_step2000_probabilities_"+ str(folds) + "_fold"))
 
