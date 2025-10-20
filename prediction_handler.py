@@ -235,7 +235,7 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
                 y_pred[:,test_idx] = model.predict_proba(X_arr[test_idx])
                 y_true[:,test_idx] = Y_arr[test_idx]
 
-    if method == "predict_proba":
-        y_pred = y_pred[..., 1]
+    #if method == "predict_proba":
+    #    y_pred = y_pred[..., 1]
 
     return y_pred, y_true

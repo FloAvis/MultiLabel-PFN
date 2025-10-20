@@ -75,7 +75,7 @@ def main():
 
             df_y_true = pd.DataFrame(y_true, columns=drugs)
 
-            y_pred_new = (y_pred >= 0.5) * 1.0
+            y_pred_new = (y_pred[..., 1] >= 0.5) * 1.0
 
             print(y_pred_new.shape)
 
@@ -90,7 +90,7 @@ def main():
 
 
 
-            result_handler.save_multilabel(y_pred, df_y_true, k_folds=kfolds, label=(
+            result_handler.save_multilabel_proba(np.stack(y_pred, axis=1), df_y_true, k_folds=kfolds, label=(
                     file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
                 0] + "_MuLaTabICL_finetune_step2000_probabilities_"+ str(folds) + "_fold"))
 
