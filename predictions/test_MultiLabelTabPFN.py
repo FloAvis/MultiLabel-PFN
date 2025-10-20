@@ -29,10 +29,10 @@ def main():
         X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
 
 
-        #multi_target_pfn = TabICLClassifier(model_path="../my/stage1/checkpoint/dir/step-1000.ckpt",n_estimators=1, allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
+        multi_target_pfn = TabICLClassifier(model_path="../my/step-2000.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
 
-        multi_target_pfn = TabICLClassifier(checkpoint_version="tananobicl-classifier-v1.1-0506.ckpt", n_estimators=1,
-                                            n_jobs=2, verbose=True, use_hierarchical=False)
+        #multi_target_pfn = TabICLClassifier(model_path="../my/tabicl-classifier-v1.1-0506.ckpt", checkpoint_version="tabicl-classifier-v1.1-0506.ckpt", n_estimators=1,
+        #                                    n_jobs=2, verbose=True, use_hierarchical=False)
 
         use_kfold = False
         folds = 5

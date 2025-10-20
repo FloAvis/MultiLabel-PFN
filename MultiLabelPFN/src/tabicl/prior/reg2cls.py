@@ -190,6 +190,8 @@ class MultiLabelAssigner(nn.Module):
         #generating random quantiles between min_quantile and max_quantile
         quan = torch.zeros(input.shape[1]).uniform_(self.min_quan, self.max_quan)
 
+        quan = quan.to(input.device)
+
         #assigning classes to labels based on the quantiles for each label
         return (input > torch.diagonal(torch.quantile(input, quan, dim=0))).float()
 
