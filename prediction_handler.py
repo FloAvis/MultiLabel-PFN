@@ -211,13 +211,9 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
                 y_pred_tmp = model.predict_proba(X_arr[test_idx])
 
             if method == "predict_proba" and len(y_pred_tmp.shape) == 2:
-                if mode == "single":
-                    y_pred = np.zeros((X.shape[0], Y.shape[1]))
-                    y_true = np.zeros((X.shape[0], Y.shape[1]))  # (n_samples, n_labels, n_classes)
-                elif mode == "ensemble":
-                    y_pred = np.zeros((model.n_jobs, X.shape[0], Y.shape[1]))  # (n_samples, n_labels, n_classes)
-                    y_true = np.zeros((model.n_jobs, X.shape[0], Y.shape[1]))  # (n_samples, n_labels, n_classes)
-
+                y_pred_tmp_tmp = np.zeros_like(y_pred)
+                y_pred_tmp_tmp[:,:,0] = y_pred_tmp
+                y_pred_tmp = y_pred_tmp_tmp
                 predict_proba_classSelect = False
 
 
