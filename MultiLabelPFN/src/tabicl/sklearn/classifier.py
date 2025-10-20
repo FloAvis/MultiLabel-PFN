@@ -370,8 +370,10 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         if OLD_SKLEARN:
             # Workaround for compatibility with scikit-learn prior to v1.6
             X, y = self._validate_data(X, y, dtype=None, cast_to_ndarray=False)
+            print("old sklearn")
         else:
             X, y = self._validate_data(X, y, dtype=None, skip_check_array=True)
+            print("new sklearn")
 
         check_classification_targets(y)
 

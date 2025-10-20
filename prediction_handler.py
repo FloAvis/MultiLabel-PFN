@@ -198,7 +198,7 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
         print(X_arr[train_idx])
         print(Y_arr[train_idx])
 
-        model.fit(X_arr[train_idx], Y_arr[train_idx])
+        model.fit(pd.DataFrame(X_arr[train_idx]), pd.DataFrame(Y_arr[train_idx]))
 
         if mode == "single":
             if method == "predict":
