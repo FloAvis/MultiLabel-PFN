@@ -37,10 +37,6 @@ def main():
         use_kfold = True
         folds = 5
 
-        X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
-
-        print(X_train)
-        print(y_train)
 
         if use_kfold == False:
 
@@ -94,7 +90,7 @@ def main():
 
 
 
-            result_handler.save_multilabel_proba(np.stack(y_pred, axis=1), df_y_true, k_folds=kfolds, label=(
+            result_handler.save_multilabel(y_pred, df_y_true, k_folds=kfolds, label=(
                     file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
                 0] + "_MuLaTabICL_finetune_step2000_probabilities_"+ str(folds) + "_fold"))
 
