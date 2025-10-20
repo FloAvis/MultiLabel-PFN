@@ -191,6 +191,7 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
 
     X_arr = np.array(X)
     Y_arr = np.array(Y)
+    predict_proba_classSelect = True
 
     counter = 0
     for train_idx, test_idx in cv.split(X):
@@ -209,15 +210,22 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
             else:
                 y_pred_tmp = model.predict_proba(X_arr[test_idx])
 
+            if method == "predict_proba" and len(y_pred_tmp.shape) == 2:
+                if mode == "single":
+                    y_pred = np.zeros((X.shape[0], Y.shape[1]))
+                    y_true = np.zeros((X.shape[0], Y.shape[1]))  # (n_samples, n_labels, n_classes)
+                elif mode == "ensemble":
+                    y_pred = np.zeros((model.n_jobs, X.shape[0], Y.shape[1]))  # (n_samples, n_labels, n_classes)
+                    y_true = np.zeros((model.n_jobs, X.shape[0], Y.shape[1]))  # (n_samples, n_labels, n_classes)
 
-            print(y_pred_tmp.shape)
+                predict_proba_classSelect = False
+
 
             if y_pred[test_idx].shape != np.array(y_pred_tmp).shape:
 
                 y_pred[test_idx] = np.stack(y_pred_tmp, axis=1)
             else:
                 y_pred[test_idx] = y_pred_tmp
-
             y_true[test_idx] = Y_arr[test_idx]
         else:
 
@@ -233,7 +241,7 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
                 y_pred[:,test_idx] = model.predict_proba(X_arr[test_idx])
                 y_true[:,test_idx] = Y_arr[test_idx]
 
-    if method == "predict_proba":
+    if method == "predict_proba" and predict_proba_classSelect:
         y_pred = y_pred[..., 1]
 
     return y_pred, y_true
