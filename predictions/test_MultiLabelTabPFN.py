@@ -34,7 +34,7 @@ def main():
         #multi_target_pfn = TabICLClassifier(model_path="../my/tabicl-classifier-v1.1-0506.ckpt", checkpoint_version="tabicl-classifier-v1.1-0506.ckpt", n_estimators=1,
         #                                    n_jobs=2, verbose=True, use_hierarchical=False)
 
-        use_kfold = False
+        use_kfold = True
         folds = 5
 
 
@@ -86,13 +86,13 @@ def main():
 
             result_handler.save_multilabel(y_pred_df, df_y_true, k_folds=kfolds, label=(
                         file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                    0] + "_Binary_Relevance_"+ str(folds) + "_fold_MOC_prediction_new_save"))
+                    0] + "_MuLaTabICL_finetune_step2000_"+ str(folds) + "_fold"))
 
 
 
             result_handler.save_multilabel_proba(np.stack(y_pred, axis=1), df_y_true, k_folds=kfolds, label=(
                     file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                0] + "_Binary_Relevance_probabilities_"+ str(folds) + "_fold_MOC_prediction_new_save"))
+                0] + "_MuLaTabICL_finetune_step2000_probabilities_"+ str(folds) + "_fold"))
 
 
 
