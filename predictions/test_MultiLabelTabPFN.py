@@ -56,7 +56,7 @@ def main():
 
 
 
-            result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL_orig_model2"))
+            result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL_finetune_step2000"))
 
 
             y_pred_proba = trained_model_pfn.predict_proba(X_test)
@@ -65,7 +65,7 @@ def main():
 
             result_handler.save_multilabel(y_pred_proba_df, y_test_df, label=(
                         file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                    0] + "_MuLaTabICL_probabilities_orig_model2"))
+                    0] + "_MuLaTabICL_probabilities_finetune_step2000"))
 
         else:
 
