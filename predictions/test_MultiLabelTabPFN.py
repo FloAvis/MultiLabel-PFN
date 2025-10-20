@@ -73,11 +73,11 @@ def main():
 
             y_pred, y_true = prediction_handler.cv_predict(multi_target_pfn, X, Y, cv=kf, mode="single", method="predict_proba")
 
+            print(y_pred, y_true)
+
             df_y_true = pd.DataFrame(y_true, columns=drugs)
 
             y_pred_new = (y_pred[..., 1] >= 0.5) * 1.0
-
-            print(y_pred_new.shape)
 
             y_pred_df = pd.DataFrame(y_pred_new, columns=drugs)
 
