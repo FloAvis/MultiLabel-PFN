@@ -195,7 +195,11 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
         counter += 1
         print("CV {}".format(counter))
 
-        model.fit(X_arr[train_idx], Y_arr[train_idx])
+        X_train = X_arr[train_idx]
+        y_train = Y_arr[train_idx]
+
+
+        model.fit(X_train, y_train)
 
         if mode == "single":
             if method == "predict":
