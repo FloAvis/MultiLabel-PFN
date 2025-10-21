@@ -115,6 +115,8 @@ def build_parser():
     parser.add_argument("--min_features", type=int, default=5, help="The minimum number of features")
     parser.add_argument("--max_features", type=int, default=100, help="The maximum number of features")
     parser.add_argument("--max_labels", type=int, default=10, help="The maximum number of labels")
+    parser.add_argument("--min_quan", type=float, default=0.5, help="The lower border for quantile class assignment")
+    parser.add_argument("--max_quan", type=float, default=0.95, help="The upper border for quantile class assignment")
     parser.add_argument("--min_seq_len", type=int, default=None, help="Minimum samples per dataset")
     parser.add_argument("--max_seq_len", type=int, default=1024, help="Maximum samples per dataset")
     parser.add_argument(

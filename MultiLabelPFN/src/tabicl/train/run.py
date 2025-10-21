@@ -253,6 +253,8 @@ class Trainer:
                 min_features=self.config.min_features,
                 max_features=self.config.max_features,
                 max_labels=self.config.max_labels,
+                min_quan=self.config.min_quan,
+                max_quan=self.config.max_quan,
                 min_seq_len=self.config.min_seq_len,
                 max_seq_len=self.config.max_seq_len,
                 log_seq_len=self.config.log_seq_len,
