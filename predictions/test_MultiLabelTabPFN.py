@@ -22,77 +22,79 @@ def main():
 
 
     files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt", r"../data/NNRTI_DataSet.txt"]
+    models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
 
     for file in files:
 
 
         X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
 
+        for model in models:
+            #multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
 
-        #multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
+            multi_target_pfn = TabICLClassifier(model_path="../my/" + model, allow_auto_download=False,
+                                                n_jobs=2, verbose=True, use_hierarchical=False)
 
-        multi_target_pfn = TabICLClassifier(model_path="../my/tabicl-classifier-v1.1-0506.ckpt", checkpoint_version="tabicl-classifier-v1.1-0506.ckpt", n_estimators=1,
-                                            n_jobs=2, verbose=True, use_hierarchical=False)
-
-        use_kfold = True
-        folds = 5
-
-
-        if use_kfold == False:
-
-            X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
-
-            #print("y_test: ", y_test.shape)
-
-            trained_model_pfn = multi_target_pfn.fit(X_train, y_train)
-
-            y_pred = trained_model_pfn.predict(X_test)
-
-
-            y_pred_df = pd.DataFrame(y_pred, columns=drugs)
-
-            y_test_df = pd.DataFrame(y_test, columns=drugs)
+            use_kfold = True
+            folds = 5
 
 
 
+            if use_kfold == False:
 
-            result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL_random_step1"))
+                X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
+
+                #print("y_test: ", y_test.shape)
+
+                trained_model_pfn = multi_target_pfn.fit(X_train, y_train)
+
+                y_pred = trained_model_pfn.predict(X_test)
 
 
-            y_pred_proba = trained_model_pfn.predict_proba(X_test)
+                y_pred_df = pd.DataFrame(y_pred, columns=drugs)
 
-            y_pred_proba_df = pd.DataFrame(y_pred_proba, columns=drugs)
+                y_test_df = pd.DataFrame(y_test, columns=drugs)
 
-            result_handler.save_multilabel(y_pred_proba_df, y_test_df, label=(
+
+
+
+                result_handler.save_multilabel(y_pred_df, y_test_df, label= (file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[0] + "_MuLaTabICL_random_step1"))
+
+
+                y_pred_proba = trained_model_pfn.predict_proba(X_test)
+
+                y_pred_proba_df = pd.DataFrame(y_pred_proba, columns=drugs)
+
+                result_handler.save_multilabel(y_pred_proba_df, y_test_df, label=(
+                            file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
+                        0] + "_MuLaTabICL_probabilities_random_step1"))
+
+            else:
+
+                kf = KFold(n_splits=folds, random_state=42, shuffle=True)
+
+                y_pred, y_true = prediction_handler.cv_predict(multi_target_pfn, X, Y, cv=kf, mode="single", method="predict_proba")
+
+                #print(y_pred, y_true)
+
+                df_y_true = pd.DataFrame(y_true, columns=drugs)
+
+                y_pred_new = (y_pred[..., 1] >= 0.5) * 1.0
+
+                y_pred_df = pd.DataFrame(y_pred_new, columns=drugs)
+
+                kfolds = result_handler.get_kfold(kf, X, Y)
+
+
+                result_handler.save_multilabel(y_pred_df, df_y_true, k_folds=kfolds, label=(
+                            file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
+                        0] + "_MuLaTabICL_" + model + "_"+ str(folds) + "_fold"))
+
+
+
+                result_handler.save_multilabel_proba(np.stack(y_pred, axis=1), df_y_true, k_folds=kfolds, label=(
                         file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                    0] + "_MuLaTabICL_probabilities_random_step1"))
-
-        else:
-
-            kf = KFold(n_splits=folds, random_state=42, shuffle=True)
-
-            y_pred, y_true = prediction_handler.cv_predict(multi_target_pfn, X, Y, cv=kf, mode="single", method="predict_proba")
-
-            print(y_pred, y_true)
-
-            df_y_true = pd.DataFrame(y_true, columns=drugs)
-
-            y_pred_new = (y_pred[..., 1] >= 0.5) * 1.0
-
-            y_pred_df = pd.DataFrame(y_pred_new, columns=drugs)
-
-            kfolds = result_handler.get_kfold(kf, X, Y)
-
-
-            result_handler.save_multilabel(y_pred_df, df_y_true, k_folds=kfolds, label=(
-                        file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                    0] + "_MuLaTabICL_random_step1_"+ str(folds) + "_fold"))
-
-
-
-            result_handler.save_multilabel_proba(np.stack(y_pred, axis=1), df_y_true, k_folds=kfolds, label=(
-                    file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                0] + "_MuLaTabICL_random_step1_probabilities_"+ str(folds) + "_fold"))
+                    0] + "_MuLaTabICL_" + model + "_probabilities_"+ str(folds) + "_fold"))
 
 
 
