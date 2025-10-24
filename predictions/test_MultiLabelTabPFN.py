@@ -21,8 +21,10 @@ from MultiLabelPFN.src.tabicl import TabICLClassifier
 def main():
 
 
-    files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt", r"../data/NNRTI_DataSet.txt"]
+    #files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt", r"../data/NNRTI_DataSet.txt"]
     #models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
+    files = [r"../data/PI_DataSet.txt"]
+
 
     models = [r"full_model_step-1000.ckpt"]
 
@@ -40,7 +42,7 @@ def main():
             use_kfold = True
             folds = 5
 
-            version = "new_loss"
+            version = "_new_loss_average_logits"
 
             if use_kfold == False:
 
