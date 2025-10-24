@@ -22,7 +22,9 @@ def main():
 
 
     files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt", r"../data/NNRTI_DataSet.txt"]
-    models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
+    #models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
+
+    models = [r"full_model_step-1000.ckpt"]
 
     for file in files:
 
@@ -32,13 +34,13 @@ def main():
         for model in models:
             #multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
 
-            multi_target_pfn = TabICLClassifier(model_path="../my/" + model, allow_auto_download=False,
+            multi_target_pfn = TabICLClassifier(model_path="../my/" + model, allow_auto_download=False, average_logits=False,
                                                 n_jobs=2, verbose=True, use_hierarchical=False)
 
             use_kfold = True
             folds = 5
 
-
+            version = "new_loss"
 
             if use_kfold == False:
 
@@ -79,7 +81,7 @@ def main():
 
                 df_y_true = pd.DataFrame(y_true, columns=drugs)
 
-                y_pred_new = (y_pred[..., 1] >= 0.5) * 1.0
+                y_pred_new = (y_pred[..., 1] >= 0) * 1.0
 
                 y_pred_df = pd.DataFrame(y_pred_new, columns=drugs)
 
@@ -88,13 +90,13 @@ def main():
 
                 result_handler.save_multilabel(y_pred_df, df_y_true, k_folds=kfolds, label=(
                             file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                        0] + "_MuLaTabICL_" + model + "_"+ str(folds) + "_fold"))
+                        0] + "_MuLaTabICL_" + model.strip(".ckpt") + "_"+ str(folds) + "_fold" + version))
 
 
 
                 result_handler.save_multilabel_proba(np.stack(y_pred, axis=1), df_y_true, k_folds=kfolds, label=(
                         file.split("/")[-1].split("_")[0] + "_results/" + file.split("/")[-1].split("_")[
-                    0] + "_MuLaTabICL_" + model + "_probabilities_"+ str(folds) + "_fold"))
+                    0] + "_MuLaTabICL_" + model.strip(".ckpt") + "_probabilities_"+ str(folds) + "_fold" + version))
 
 
 
