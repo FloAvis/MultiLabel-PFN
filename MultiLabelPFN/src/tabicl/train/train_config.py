@@ -114,7 +114,9 @@ def build_parser():
     parser.add_argument("--batch_size_per_gp", type=int, default=4, help="Batch size per group")
     parser.add_argument("--min_features", type=int, default=5, help="The minimum number of features")
     parser.add_argument("--max_features", type=int, default=100, help="The maximum number of features")
-    parser.add_argument("--max_classes", type=int, default=10, help="The maximum number of classes")
+    parser.add_argument("--max_labels", type=int, default=10, help="The maximum number of labels")
+    parser.add_argument("--min_quan", type=float, default=0.5, help="The lower border for quantile class assignment")
+    parser.add_argument("--max_quan", type=float, default=0.95, help="The upper border for quantile class assignment")
     parser.add_argument("--min_seq_len", type=int, default=None, help="Minimum samples per dataset")
     parser.add_argument("--max_seq_len", type=int, default=1024, help="Maximum samples per dataset")
     parser.add_argument(
@@ -186,6 +188,7 @@ def build_parser():
     parser.add_argument("--icl_num_blocks", type=int, default=12, help="Number of transformer blocks in ICL predictor")
     parser.add_argument("--icl_nhead", type=int, default=4, help="Number of attention heads in ICL predictor")
     parser.add_argument("--freeze_icl", default=False, type=str2bool, help="Whether to freeze the ICL predictor")
+    parser.add_argument("--freeze_icl_finetune", default=False, type=str2bool, help="Whether to freeze the ICL main block predictor while keeping label encoder and decoder")
 
     # Shared Architecture Config
     parser.add_argument("--ff_factor", type=int, default=2, help="Expansion factor for feedforward dimensions")

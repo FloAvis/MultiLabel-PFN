@@ -169,7 +169,7 @@ class Trainer:
         """Build and initialize the TabICL model."""
 
         self.model_config = {
-            "max_classes": self.config.max_classes,
+            "max_labels": self.config.max_labels,
             "embed_dim": self.config.embed_dim,
             "col_num_blocks": self.config.col_num_blocks,
             "col_nhead": self.config.col_nhead,
@@ -209,6 +209,22 @@ class Trainer:
             for param in model.icl_predictor.parameters():
                 param.requires_grad = False
 
+
+        if self.config.freeze_icl_finetune:
+            model.icl_predictor.tf_icl.eval()
+            for param in model.icl_predictor.tf_icl.parameters():
+                param.requires_grad = False
+
+        '''
+        if self.config.freeze_icl_finetune:
+            for name, param in model.named_parameters():
+                if param.requires_grad:
+                    print(name)
+            model.icl_predictor.eval()
+            for param in model.icl_predictor.parameters():
+                param.requires_grad = False
+        '''
+
         # Compile model if requested
         if self.config.model_compile:
             model = torch.compile(model, dynamic=True)
@@ -236,7 +252,9 @@ class Trainer:
                 batch_size_per_gp=self.config.batch_size_per_gp,
                 min_features=self.config.min_features,
                 max_features=self.config.max_features,
-                max_classes=self.config.max_classes,
+                max_labels=self.config.max_labels,
+                min_quan=self.config.min_quan,
+                max_quan=self.config.max_quan,
                 min_seq_len=self.config.min_seq_len,
                 max_seq_len=self.config.max_seq_len,
                 log_seq_len=self.config.log_seq_len,
@@ -333,6 +351,8 @@ class Trainer:
             checkpoint_path = self.config.checkpoint_path
         elif hasattr(self.config, "checkpoint_dir") and self.config.checkpoint_dir:
             checkpoint_path = self.get_latest_checkpoint()
+
+
 
         if checkpoint_path is None or not os.path.exists(checkpoint_path):
             print("No checkpoint found, starting from scratch.")
@@ -578,10 +598,13 @@ class Trainer:
             self.model.require_backward_grad_sync = micro_batch_idx == num_micro_batches - 1
 
         with self.amp_ctx:
-            pred = self.model(micro_X, y_train, micro_d)  # (B, test_size, max_classes)
+            pred = self.model(micro_X, y_train, micro_d)  # (B, test_size, max_labels)
             pred = pred.flatten(end_dim=-2)
-            true = y_test.long().flatten()
-            loss = F.cross_entropy(pred, true)
+            #true = y_test.long().flatten()
+            true = y_test.float().flatten(end_dim=-2)
+
+            loss = F.binary_cross_entropy_with_logits(pred, true)
+
 
         # Scale loss for gradient accumulation and backpropagate
         scaled_loss = loss / num_micro_batches
@@ -590,8 +613,8 @@ class Trainer:
         with torch.no_grad():
             micro_results = {}
             micro_results["ce"] = scaled_loss.item()
-            accuracy = (pred.argmax(dim=1) == true).sum() / len(true)
-            micro_results["accuracy"] = accuracy.item() / num_micro_batches
+            exam_accuracy = (((pred > 0).float() == true).sum(dim=-1) / true.shape[-1]).sum() / true.shape[-2]
+            micro_results["exam_accuracy"] = exam_accuracy.item() / num_micro_batches
 
         return micro_results
 
@@ -600,7 +623,7 @@ class Trainer:
         Trains the model on a batch of datasets. Handles gradient accumulation by
         splitting the batch into micro-batches. Supports variable-sized datasets
         by padding. Skips micro-batches on CUDA OOM errors. Updates model
-        parameters and returns loss and accuracy metrics.
+        parameters and returns loss and exam_accuracy metrics.
 
         Parameters
         ----------
@@ -611,7 +634,7 @@ class Trainer:
         Returns
         ------
         dict
-            Dictionary containing 'ce' (cross-entropy loss) and 'accuracy'.
+            Dictionary containing 'ce' (cross-entropy loss) and 'exam_accuracy'.
 
         Raises
         ------
@@ -629,7 +652,7 @@ class Trainer:
         micro_batches = [torch.split(t, self.config.micro_batch_size, dim=0) for t in batch]
         micro_batches = list(zip(*micro_batches))
 
-        results = {"ce": 0.0, "accuracy": 0.0}
+        results = {"ce": 0.0, "exam_accuracy": 0.0}
         failed_batches = 0
 
         for idx, micro_batch in enumerate(micro_batches):

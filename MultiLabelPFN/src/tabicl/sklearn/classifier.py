@@ -18,9 +18,18 @@ from huggingface_hub import hf_hub_download
 from huggingface_hub.utils import LocalEntryNotFoundError
 
 from .preprocessing import TransformToNumerical, EnsembleGenerator
-from tabicl import InferenceConfig
-from tabicl import TabICL
 
+try:
+    from MultiLabelPFN.src.tabicl import InferenceConfig
+    from MultiLabelPFN.src.tabicl import TabICL
+except:
+    print("Not able to import from MultiLanelPFN, bad path")
+
+try:
+    from tabicl import InferenceConfig
+    from tabicl import TabICL
+except:
+    print("Not able to import, bad path")
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn")
 OLD_SKLEARN = version.parse(sklearn.__version__) < version.parse("1.6")
@@ -343,7 +352,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         X : array-like of shape (n_samples, n_features)
             Training input data.
 
-        y : array-like of shape (n_samples,)
+        y : array-like of shape (n_samples,n_labels)
             Training target labels.
 
         Returns
@@ -397,22 +406,24 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         # If InferenceConfig, use as is
         else:
             self.inference_config_ = self.inference_config
-
+        '''
         # Encode class labels
         self.y_encoder_ = LabelEncoder()
         y = self.y_encoder_.fit_transform(y)
         self.classes_ = self.y_encoder_.classes_
         self.n_classes_ = len(self.y_encoder_.classes_)
+        '''
+        self.n_labels_ = y.shape[1]
 
-        if self.n_classes_ > self.model_.max_classes and not self.use_hierarchical:
+        if self.n_labels_ > self.model_.max_labels and not self.use_hierarchical:
             raise ValueError(
-                f"The number of classes ({self.n_classes_}) exceeds the max number of classes ({self.model_.max_classes}) "
+                f"The number of classes ({self.n_labels_}) exceeds the max number of classes ({self.model_.max_labels}) "
                 f"natively supported by the model. Consider enabling hierarchical classification."
             )
 
-        if self.n_classes_ > self.model_.max_classes and self.verbose:
+        if self.n_labels_ > self.model_.max_labels and self.verbose:
             print(
-                f"The number of classes ({self.n_classes_}) exceeds the max number of classes ({self.model_.max_classes}) "
+                f"The number of classes ({self.n_labels_}) exceeds the max number of classes ({self.model_.max_labels}) "
                 f"natively supported by the model. Therefore, hierarchical classification is used."
             )
 
@@ -598,13 +609,13 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
 
         Returns
         -------
-        array-like of shape (n_samples,)
+        array-like of shape (n_samples,n_labels)
             Predicted class labels for each test sample.
         """
         proba = self.predict_proba(X)
-        y = np.argmax(proba, axis=1)
+        y = (proba > 0.5).astype(int)
 
-        return self.y_encoder_.inverse_transform(y)
+        return y
 
     @staticmethod
     def softmax(x, axis: int = -1, temperature: float = 0.9):

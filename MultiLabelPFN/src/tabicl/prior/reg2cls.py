@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 import warnings
+import random
 
 import numpy as np
 import torch
@@ -127,6 +128,7 @@ def permute_classes(input: Tensor) -> Tensor:
     Tensor
         Target with potentially permuted labels (T,).
     """
+
     unique_vals, _ = torch.unique(input, return_inverse=True)
     num_classes = len(unique_vals)
 
@@ -155,14 +157,43 @@ class BalancedBinarize(nn.Module):
         Parameters
         ----------
         input : Tensor
-            Input of shape (T,).
+            Input of shape (T,O).
 
         Returns
         -------
         Tensor
-            Binarized output (0 or 1) of shape (T,).
+            Binarized output (0 or 1) of shape (T,O).
         """
-        return (input > torch.median(input)).float()
+        return (input > torch.median(input, 0)[0]).float()
+
+class MultiLabelAssigner(nn.Module):
+    """Assigns class labels to the labels based on random quantiles for each label."""
+
+    def __init__(self, min_quan: float = 0.5, max_quan: float = 0.95 ):
+        super().__init__()
+        self.max_quan = max_quan
+        self.min_quan = min_quan
+
+    def forward(self, input: Tensor) -> Tensor:
+        """
+        Parameters
+        ----------
+        input : Tensor
+            Input of shape (T, L).
+
+        Returns
+        -------
+        Tensor
+            Multilabel assigned output (0 or 1) of shape (T, L).
+        """
+
+        #generating random quantiles between min_quantile and max_quantile
+        quan = torch.zeros(input.shape[1]).uniform_(self.min_quan, self.max_quan)
+
+        quan = quan.to(input.device)
+
+        #assigning classes to labels based on the quantiles for each label
+        return (input > torch.diagonal(torch.quantile(input, quan, dim=0))).float()
 
 
 class MulticlassAssigner(nn.Module):
@@ -231,7 +262,6 @@ class MulticlassAssigner(nn.Module):
 
         return classes
 
-
 class Reg2Cls(nn.Module):
     """Transforms a single regression dataset (features X, targets y) into a classification format
     through feature processing (categorical conversion, normalization) and target transformation
@@ -242,7 +272,7 @@ class Reg2Cls(nn.Module):
     hyperparameters : dict
         Configuration dictionary containing settings for feature processing and
         target transformation. Expected keys include:
-        - num_classes (int): Number of classes for classification conversion.
+        - num_labels (int): Number of labels for classification conversion.
         - max_features (int): Maximum number of features allowed (defines output feature dim).
         - multiclass_type (str): Strategy for multiclass conversion ('rank' or 'value').
         - balanced (bool): Whether to enforce balanced classes (currently only for binary).
@@ -260,27 +290,29 @@ class Reg2Cls(nn.Module):
 
     class_assigner : nn.Module or None
         The module responsible for converting regression targets to class labels.
-        None if num_classes is 0.
+        None if num_labels is 0.
     """
 
     def __init__(self, hp: dict):
         super().__init__()
         self.hp = hp
 
-        num_classes = self.hp["num_classes"]
-        if num_classes == 0:
-            self.class_assigner = None
-        elif num_classes == 2 and self.hp.get("balanced", False):
+        num_labels = self.hp["num_outputs"]
+
+        # Only one Label using TabICL base function
+        if num_labels == 1:
             self.class_assigner = BalancedBinarize()
-        elif num_classes >= 2:
-            self.class_assigner = MulticlassAssigner(
-                num_classes, mode=self.hp["multiclass_type"], ordered_prob=self.hp["multiclass_ordered_prob"]
-            )
+        # For multilabel using multilabel assigner
         else:
-            raise ValueError(f"Invalid number of classes: {num_classes}")
+            self.class_assigner = MultiLabelAssigner(
+                min_quan=hp["min_quan"], max_quan=hp["max_quan"]
+            )
+
+
 
     def forward(self, X: Tensor, y: Tensor) -> tuple[Tensor, Tensor]:
-        """Processes a single dataset (X, y) according to the initialized hyperparameters.
+        """
+        Processes a single dataset (X, y) according to the initialized hyperparameters.
 
         Parameters
         ----------
@@ -288,28 +320,36 @@ class Reg2Cls(nn.Module):
             Features of shape (T, H), where H is the number of features.
 
         y : Tensor
-            Targets of shape (T,).
+            Targets of shape (T,L), where L is the number of labels.
 
         Returns
         -------
         tuple[Tensor, Tensor]
             A tuple containing:
             - Processed features of shape (T, max_features).
-            - Processed targets of shape (T,).
+            - Processed targets of shape (T, max_labels).
         """
-        if X.ndim != 2 or y.ndim != 1 or X.shape[0] != y.shape[0]:
+
+
+        if X.ndim != 2 or X.shape[0] != y.shape[0]:
             raise ValueError(f"Input shapes mismatch or incorrect dims. X: {X.shape}, y: {y.shape}")
 
         X = self._num2cat(X)
         X = self._process_features(X)
 
-        y = standard_scaling(y.unsqueeze(-1)).squeeze(-1)
-        if self.class_assigner is not None:
-            y = self.class_assigner(y)
-            if self.hp.get("permute_labels", True):
-                y = permute_classes(y)
+        '''
+        if y.ndim == 1:
+            y = standard_scaling(y.unsqueeze(-1))
+        else:
+            y = standard_scaling(y)
+        '''
 
-        return X.float(), y.float()
+
+
+        y = self.class_assigner(y)
+
+
+        return X.float(), self._process_labels(y).float()
 
     def _num2cat(self, X: Tensor) -> Tensor:
         """Converts some features to categorical based on hyperparameters.
@@ -374,3 +414,32 @@ class Reg2Cls(nn.Module):
             X = F.pad(X, (0, max_features - num_features), mode="constant", value=0.0)
 
         return X
+
+    def _process_labels(self, y: Tensor) -> Tensor:
+        """Process inputs through padding to max labels.
+
+        Parameters
+        ----------
+        y : Tensor
+            Label tensor of shape (T, L).
+
+        Returns
+        -------
+        Tensor
+            Normalized label tensor (T, L).
+        """
+
+        if y.ndim == 1:
+            y = y.unsqueeze(-1)
+
+        num_labels = y.shape[1]
+        max_labels = self.hp["max_labels"]
+
+
+        # Add empty features if needed to match max features
+        if num_labels < max_labels:
+            y = F.pad(y, (0, max_labels - num_labels), mode="constant", value=0.0)
+
+
+
+        return y

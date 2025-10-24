@@ -5,7 +5,7 @@ import math
 import torch
 from torch import nn, Tensor
 
-from .layers import ClassNode, OneHotAndLinear
+from .layers import ClassNode, LabelLinear
 from .encoders import Encoder
 from .inference import InferenceManager
 from .inference_config import MgrConfig
@@ -22,8 +22,8 @@ class ICLearning(nn.Module):
 
     Parameters
     ----------
-    max_classes : int
-        Number of classes that the model supports natively. If the number of classes
+    max_labels : int
+        Number of labels that the model supports natively. If the number of labels
         in the dataset exceeds this value, hierarchical classification is used.
 
     d_model : int
@@ -51,7 +51,7 @@ class ICLearning(nn.Module):
 
     def __init__(
         self,
-        max_classes: int,
+        max_labels: int,
         d_model: int,
         num_blocks: int,
         nhead: int,
@@ -61,7 +61,7 @@ class ICLearning(nn.Module):
         norm_first: bool = True,
     ):
         super().__init__()
-        self.max_classes = max_classes
+        self.max_labels = max_labels
         self.norm_first = norm_first
 
         self.tf_icl = Encoder(
@@ -76,12 +76,13 @@ class ICLearning(nn.Module):
         if self.norm_first:
             self.ln = nn.LayerNorm(d_model)
 
-        self.y_encoder = OneHotAndLinear(max_classes, d_model)
-        self.decoder = nn.Sequential(nn.Linear(d_model, d_model * 2), nn.GELU(), nn.Linear(d_model * 2, max_classes))
+        self.y_encoder = LabelLinear(max_labels, d_model)
 
-        self.inference_mgr = InferenceManager(enc_name="tf_icl", out_dim=max_classes)
+        self.decoder = nn.Sequential(nn.Linear(d_model, d_model * 2), nn.GELU(), nn.Linear(d_model * 2, max_labels))
 
-    def _grouping(self, num_classes: int) -> tuple[Tensor, int]:
+        self.inference_mgr = InferenceManager(enc_name="tf_icl", out_dim=max_labels)
+
+    def _grouping(self, num_labels: int) -> tuple[Tensor, int]:
         """Divide classes into balanced groups for hierarchical classification.
 
         This method implements a balanced partitioning strategy that divides classes
@@ -212,17 +213,17 @@ class ICLearning(nn.Module):
              - T is the number of samples (rows)
              - D is the dimension of row representations
 
-        y_train : Tensor of shape (B, train_size)
+        y_train : Tensor of shape (B, train_size, label_size)
             Training targets, where train_size is the position to split
             the input into training and test data
         """
 
         train_size = y_train.shape[1]
-        R[:, :train_size] = R[:, :train_size] + self.y_encoder(y_train.float())
+        R[:, :train_size] = R[:, :train_size] + self.y_encoder(y_train.float())          #adding up of tensors
         src = self.tf_icl(R, attn_mask=train_size)
         if self.norm_first:
             src = self.ln(src)
-        out = self.decoder(src)  # (B, T, max_classes)
+        out = self.decoder(src)  # (B, T, max_labels)
 
         return out
 
@@ -231,10 +232,9 @@ class ICLearning(nn.Module):
         R: Tensor,
         y_train: Tensor,
         return_logits: bool = False,
-        softmax_temperature: float = 0.9,
         auto_batch: bool = True,
     ) -> Tensor:
-        """Generate predictions for standard classification with up to `max_classes` classes.
+        """Generate predictions for standard classification with up to `max_labels` labels.
 
         Parameters
         ----------
@@ -259,14 +259,14 @@ class ICLearning(nn.Module):
         """
 
         train_size = y_train.shape[1]
-        num_classes = len(torch.unique(y_train[0]))
+        num_labels = y_train.shape[2]
         out = self.inference_mgr(
             self._icl_predictions, inputs=OrderedDict([("R", R), ("y_train", y_train)]), auto_batch=auto_batch
         )
-        out = out[:, train_size:, :num_classes]
+        out = out[:, train_size:, :num_labels]
 
         if not return_logits:
-            out = torch.softmax(out / softmax_temperature, dim=-1)
+            out = nn.functional.sigmoid(out)
 
         return out
 
@@ -377,7 +377,7 @@ class ICLearning(nn.Module):
         Returns
         -------
         Tensor
-            Raw logits or probabilities for test samples of shape (B, T-train_size, num_classes)
+            Raw logits or probabilities for test samples of shape (B, T-train_size, num_labels)
         """
         # Configure inference parameters
         if mgr_config is None:
@@ -392,15 +392,15 @@ class ICLearning(nn.Module):
             )
         self.inference_mgr.configure(**mgr_config)
 
-        num_classes = len(torch.unique(y_train[0]))
+        num_labels = y_train.shape[2]
         assert all(
-            len(torch.unique(yi)) == num_classes for yi in y_train
-        ), "All tables must have the same number of classes"
+            yi.shape[1] == num_labels for yi in y_train
+        ), "All tables must have the same number of labels"
 
-        if num_classes <= self.max_classes:
+        if num_labels <= self.max_labels:
             # Standard classification
             out = self._predict_standard(
-                R, y_train, return_logits=return_logits, softmax_temperature=softmax_temperature
+                R, y_train, return_logits=return_logits
             )
         else:
             # Hierarchical classification
@@ -455,10 +455,10 @@ class ICLearning(nn.Module):
         -------
         Tensor
             For training mode:
-              Raw logits of shape (B, T-train_size, max_classes), which will be further handled by the training code.
+              Raw logits of shape (B, T-train_size, max_labels), which will be further handled by the training code.
 
             For inference mode:
-              Raw logits or probabilities for test samples of shape (B, T-train_size, num_classes).
+              Raw logits or probabilities for test samples of shape (B, T-train_size, num_labels).
         """
 
         if self.training:
