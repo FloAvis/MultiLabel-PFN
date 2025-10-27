@@ -57,7 +57,7 @@ def main():
             # "device": config.prior_device,
         }
 
-        print("Threshold for model " + model.strip(".ckpt") + ": " + prediction_handler.calc_threshold(multi_target_pfn))
+        print("Threshold for model " + model.strip(".ckpt") + ": " + prediction_handler.calc_threshold(multi_target_pfn, config_dict))
 
 
 
