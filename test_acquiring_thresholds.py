@@ -35,7 +35,7 @@ def main():
 
     for model in models:
 
-        multi_target_pfn = TabICLClassifier(model_path="./my/" + model, allow_auto_download=False, average_logits=True,
+        multi_target_pfn = TabICLClassifier(model_path="./my/" + model, allow_auto_download=False,
                                             n_jobs=2, use_hierarchical=False)
 
         config_dict = {
@@ -65,3 +65,17 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+'''
+Threshold for model finetune_step-1250:  0.7540253
+Threshold for model bal_prior_step-1000:  0.52958435
+Threshold for model finetune_step-2000:  0.79760474
+Threshold for model bal_prior_step-1350:  0.5100705
+Threshold for model finetune_step-3150:  0.67292804
+Threshold for model full_model_step-1000:  0.7548192
+Threshold for model abicl-classifier-v1.1-0506:  0.7361159
+Threshold for model random_test/step-1:  nan
+Threshold for model full_model_step-1000:  0.74242115
+
+'''
