@@ -21,12 +21,19 @@ from MultiLabelPFN.src.tabicl import TabICLClassifier
 def main():
 
 
-    #files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt", r"../data/NNRTI_DataSet.txt"]
+    files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt", r"../data/NNRTI_DataSet.txt"]
     #models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
-    files = [r"../data/PI_DataSet.txt"]
+    #files = [r"../data/PI_DataSet.txt"]
 
-
-    models = [r"full_model_step-1000.ckpt"]
+    models = [
+        "finetune_step-1250.ckpt",
+        "bal_prior_step-1000.ckpt",
+        "finetune_step-2000.ckpt",
+        "bal_prior_step-1350.ckpt",
+        "finetune_step-3150.ckpt",
+        "full_model_step-1000.ckpt",
+        "tabicl-classifier-v1.1-0506.ckpt",
+        "random_test/step-1.ckpt"]
 
     for file in files:
 
@@ -42,7 +49,7 @@ def main():
             use_kfold = True
             folds = 5
 
-            version = "_new_loss_sigmoid_logits"
+            version = "_new_loss_sigmoid"
 
             if use_kfold == False:
 

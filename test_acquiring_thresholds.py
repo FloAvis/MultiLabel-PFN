@@ -68,6 +68,8 @@ if __name__ == '__main__':
 
 
 '''
+
+Thresholds with temperature :
 Threshold for model finetune_step-1250:  0.7540253
 Threshold for model bal_prior_step-1000:  0.52958435
 Threshold for model finetune_step-2000:  0.79760474
@@ -78,4 +80,15 @@ Threshold for model abicl-classifier-v1.1-0506:  0.7361159
 Threshold for model random_test/step-1:  nan
 Threshold for model full_model_step-1000:  0.74242115
 
+
+Thresholds with internal sigmoid:
+Threshold for model finetune_step-1250:  0.6860411
+Threshold for model bal_prior_step-1000:  0.5292327
+Threshold for model finetune_step-2000:  0.747135
+Threshold for model bal_prior_step-1350:  0.504576
+Threshold for model finetune_step-3150:  0.67952967
+Threshold for model full_model_step-1000:  0.5663883
+Threshold for model abicl-classifier-v1.1-0506:  0.709058
+Threshold for model random_test/step-1:  nan
+Threshold for model full_model_step-1000:  0.59634644
 '''
