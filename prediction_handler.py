@@ -203,7 +203,8 @@ def calc_threshold(classifier, prior_config):
 
             thr_i = np.argmax(opti)
 
-            thresholds.append(thrs[thr_i])
+            if not thrs[thr_i] == np.inf:
+                thresholds.append(thrs[thr_i])
 
 
 
