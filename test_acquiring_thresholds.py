@@ -39,7 +39,7 @@ def main():
                                             n_jobs=2, use_hierarchical=False)
 
         config_dict = {
-            "batch_size": 512,
+            "batch_size": 248,
             "batch_size_per_gp": 4,
             "min_features": 2,
             "max_features": 100,
