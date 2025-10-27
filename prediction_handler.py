@@ -186,7 +186,10 @@ def calc_threshold(classifier, prior_config):
 
         y_pred_proba = np.array(trained_model_pfn.predict_proba(X_test))
 
-        y_pred_proba = y_pred_proba[...,1].T
+        print(y_pred_proba)
+
+        if len(y_pred_proba.shape) == 3:
+            y_pred_proba = y_pred_proba[...,1].T
 
 
         thresholds = []
