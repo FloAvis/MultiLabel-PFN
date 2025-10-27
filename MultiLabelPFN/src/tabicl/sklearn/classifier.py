@@ -587,8 +587,8 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         avg /= n_estimators
 
         # Convert logits to probabilities if required
-        #if self.average_logits:
-        #    avg = self.sigmoid(avg, temperature=self.softmax_temperature)
+        if self.average_logits:
+            avg = self.sigmoid(avg, temperature=self.softmax_temperature)
 
         if self.n_jobs is not None:
             torch.set_num_threads(old_n_threads)
