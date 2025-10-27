@@ -35,7 +35,7 @@ def main():
 
     for model in models:
 
-        multi_target_pfn = TabICLClassifier(model_path="../my/" + model, allow_auto_download=False, average_logits=True,
+        multi_target_pfn = TabICLClassifier(model_path="./my/" + model, allow_auto_download=False, average_logits=True,
                                             n_jobs=2, verbose=True, use_hierarchical=False)
 
         config_dict = {
