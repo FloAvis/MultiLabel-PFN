@@ -27,6 +27,7 @@ def main():
 
     models = [
         "finetune_step-1250.ckpt",
+        "finetune_stage3_step-50.ckpt",
         "bal_prior_step-1000.ckpt",
         "finetune_step-2000.ckpt",
         "bal_prior_step-1350.ckpt",
