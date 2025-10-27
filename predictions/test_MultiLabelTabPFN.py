@@ -42,7 +42,7 @@ def main():
             use_kfold = True
             folds = 5
 
-            version = "_new_loss_average_logits"
+            version = "_new_loss_sigmoid_logits"
 
             if use_kfold == False:
 
@@ -83,7 +83,7 @@ def main():
 
                 df_y_true = pd.DataFrame(y_true, columns=drugs)
 
-                y_pred_new = (y_pred[..., 1] >= 0) * 1.0
+                y_pred_new = (y_pred[..., 1] >= 0.5) * 1.0
 
                 y_pred_df = pd.DataFrame(y_pred_new, columns=drugs)
 

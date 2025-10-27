@@ -3,16 +3,18 @@
 # Setup Imports
 import pandas as pd
 import numpy as np
-
+from MultiLabelPFN.src.tabicl.prior.dataset import PriorDataset
 import scipy
 
 
 from sklearn.metrics import (
     precision_recall_curve,
-    auc, average_precision_score
+    auc,
+    average_precision_score,
+    roc_curve
 )
 from sklearn.preprocessing import LabelBinarizer
-
+from sklearn.model_selection import train_test_split
 
 """
 Scores concerning Multilabel prediction:
@@ -144,6 +146,71 @@ def exam_acc(y_pred, y_true, nan_mode="warning"):
     acc = acc/y_pred.shape[0]
 
     return acc
+
+
+
+def remove_empty_columns(arr):
+
+    df = pd.DataFrame(arr)
+
+
+    df.replace(0, np.nan, inplace=True)
+    df.replace(0.0, np.nan, inplace=True)
+
+    df.dropna(how='all', axis=1, inplace=True)
+
+    df.replace(np.nan, 0.0, inplace=True)
+
+    return np.array(df)
+
+
+def calc_threshold(classifier, prior_config):
+
+    dataset = PriorDataset(**prior_config)
+
+    batch_X, batch_y, _, _, _ = dataset.get_batch()
+
+    batch_thresholds = []
+
+    for d in range(batch_X.shape[0]):
+        ds_X = batch_X[d]
+        ds_y = batch_y[d]
+
+        ds_X = remove_empty_columns(ds_X)
+        ds_y = remove_empty_columns(ds_y)
+
+        X_train, X_test, y_train, y_test = train_test_split(ds_X, ds_y, test_size=0.33, random_state=42)
+
+
+        trained_model_pfn = classifier.fit(X_train, y_train)
+
+        y_pred_proba = np.array(trained_model_pfn.predict_proba(X_test))
+
+        y_pred_proba = y_pred_proba[...,1].T
+
+
+        thresholds = []
+
+        for r in range(y_test.shape[1]):
+
+            fpr, tpr, thrs = roc_curve(y_test[:,r], y_pred_proba[:,r])
+
+
+            opti = tpr - fpr
+
+            thr_i = np.argmax(opti)
+
+            thresholds.append(thrs[thr_i])
+
+
+
+        batch_thresholds.append(np.mean(thresholds))
+
+    overall_mean_threshold = np.mean(batch_thresholds)
+
+
+    return overall_mean_threshold
+
 
 
 """

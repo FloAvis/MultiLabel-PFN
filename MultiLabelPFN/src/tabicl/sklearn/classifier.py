@@ -588,7 +588,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
 
         # Convert logits to probabilities if required
         #if self.average_logits:
-        #    avg = self.softmax(avg, axis=-1, temperature=self.softmax_temperature)
+        #    avg = self.sigmoid(avg, temperature=self.softmax_temperature)
 
         if self.n_jobs is not None:
             torch.set_num_threads(old_n_threads)
@@ -646,3 +646,30 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         e_x = np.exp(x - x_max)
         # Compute softmax
         return e_x / np.sum(e_x, axis=axis, keepdims=True)
+
+    @staticmethod
+    def sigmoid(x, axis: int = -1, temperature: float = 0.9):
+        """Compute sigmoid values with temperature scaling using NumPy.
+
+        Parameters
+        ----------
+        x : ndarray
+            Input array of logits.
+
+        axis : int, default=-1
+            Axis along which to compute softmax.
+
+        temperature : float, default=0.9
+            Temperature scaling parameter.
+
+        Returns
+        -------
+        ndarray
+            Softmax probabilities along the specified axis, with the same shape as the input.
+        """
+        x = x / temperature
+        # Subtract max for numerical stability
+        #x_max = np.max(x, axis=axis, keepdims=True)
+        e_x = np.exp(-x)
+        # Compute softmax
+        return 1 / ( 1 + e_x)
