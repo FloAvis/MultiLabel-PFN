@@ -31,32 +31,32 @@ import torch
 from sklearn import config_context
 from sklearn.base import BaseEstimator, ClassifierMixin, check_is_fitted
 from sklearn.preprocessing import LabelEncoder
-from tabpfn_common_utils.telemetry import track_model_call
-from tabpfn_common_utils.telemetry.interactive import ping
+from MultiLabelTabPFN.src.tabpfn_common_utils.telemetry import track_model_call
+from MultiLabelTabPFN.src.tabpfn_common_utils.telemetry.interactive import ping
 
-from tabpfn.base import (
+from MultiLabelTabPFN.src.tabpfn.base import (
     check_cpu_warning,
     create_inference_engine,
     determine_precision,
     get_preprocessed_datasets_helper,
     initialize_model_variables_helper,
 )
-from tabpfn.constants import (
+from MultiLabelTabPFN.src.tabpfn.constants import (
     PROBABILITY_EPSILON_ROUND_ZERO,
     SKLEARN_16_DECIMAL_PRECISION,
     XType,
     YType,
 )
-from tabpfn.inference import InferenceEngine, InferenceEngineBatchedNoPreprocessing
-from tabpfn.model_loading import load_fitted_tabpfn_model, save_fitted_tabpfn_model
-from tabpfn.preprocessing import (
+from MultiLabelTabPFN.src.tabpfn.inference import InferenceEngine, InferenceEngineBatchedNoPreprocessing
+from MultiLabelTabPFN.src.tabpfn.model_loading import load_fitted_tabpfn_model, save_fitted_tabpfn_model
+from MultiLabelTabPFN.src.tabpfn.preprocessing import (
     ClassifierEnsembleConfig,
     DatasetCollectionWithPreprocessing,
     EnsembleConfig,
     PreprocessorConfig,
     default_classifier_preprocessor_configs,
 )
-from tabpfn.utils import (
+from MultiLabelTabPFN.src.tabpfn.utils import (
     DevicesSpecification,
     fix_dtypes,
     get_embeddings,
