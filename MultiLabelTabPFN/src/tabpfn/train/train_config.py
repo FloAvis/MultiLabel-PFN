@@ -172,8 +172,6 @@ def build_parser():
 
     parser.add_argument("--emsize", type=int, default=192, help="Embedding size for the model.")
     parser.add_argument("--features_per_group", type=int, default=1, help="Number of features per group.")
-    parser.add_argument("--max_labels", type=int, default=10,
-                        help="Maximum number of classes for classification tasks.")
     parser.add_argument("--nlayers", type=int, default=12, help="Number of layers in the model.")
     parser.add_argument("--nhead", type=int, default=6, help="Number of attention heads in the model.")
     parser.add_argument("--remove_duplicate_features", default=False,
