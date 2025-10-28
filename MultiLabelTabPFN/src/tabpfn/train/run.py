@@ -22,17 +22,17 @@ from torch.distributed import init_process_group, destroy_process_group
 from tqdm import tqdm
 import wandb
 
-from tabpfn import TabPFNClassifier
+from MultiLabelTabPFN.src.tabpfn import TabPFNClassifier
 from tabicl.prior.dataset import PriorDataset
 from tabicl.prior.genload import LoadPriorDataset
 from tabicl.train.optim import get_scheduler
-from tabpfn.train.train_config import build_parser
+from MultiLabelTabPFN.src.tabpfn.train.train_config import build_parser
 
-from tabpfn.architectures import ARCHITECTURES, base
-from tabpfn.architectures.base.config import ModelConfig
-from tabpfn.model.loading import load_model_criterion_config
+from MultiLabelTabPFN.src.tabpfn.architectures import ARCHITECTURES, base
+from MultiLabelTabPFN.src.tabpfn.architectures.base.config import ModelConfig
+from MultiLabelTabPFN.src.tabpfn.model.loading import load_model_criterion_config
 
-from tabpfn.model.memory import MemoryUsageEstimator
+from MultiLabelTabPFN.src.tabpfn.model.memory import MemoryUsageEstimator
 
 warnings.filterwarnings(
     "ignore", message=".*The PyTorch API of nested tensors is in prototype stage.*", category=UserWarning
