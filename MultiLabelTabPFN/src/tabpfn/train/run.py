@@ -198,10 +198,10 @@ class Trainer:
 
 
         if self.ddp:
-            model = model.to(self.device)
-            model_ = DDP(model, device_ids=[int(self.device.split(':')[-1])], broadcast_buffers=False)
+            model = model.to(self.config.device)
+            model_ = DDP(model, device_ids=[int(self.config.device.split(':')[-1])], broadcast_buffers=False)
         else:
-            model_ = model.to(self.device)
+            model_ = model.to(self.config.device)
 
         self.model = model_
 
