@@ -3,7 +3,7 @@
 !!! example
     ```python
     import sklearn.datasets
-    from tabpfn import TabPFNRegressor
+    from MultiLabelTabPFN.src.tabpfn import TabPFNRegressor
 
     model = TabPFNRegressor()
     X, y = sklearn.datasets.make_regression(n_samples=50, n_features=10)

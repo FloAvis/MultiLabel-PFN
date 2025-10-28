@@ -2,14 +2,14 @@
 
 DEPRECATED: import MultiLabelTabPFN.src.tabpfn.architectures.base instead
 
-Previously tabpfn only supported a single architecture, which was in this MultiLabelTabPFN.src.tabpfn.model
+Previously MultiLabelTabPFN.src.tabpfn only supported a single architecture, which was in this MultiLabelTabPFN.src.tabpfn.model
 module. Now we support multiple architectures, stored in MultiLabelTabPFN.src.tabpfn.architectures, and
 tabpfn.model has moved to MultiLabelTabPFN.src.tabpfn.architectures.base .
 """
 
 import warnings
 
-from tabpfn import model_loading as loading
+from MultiLabelTabPFN.src.tabpfn import model_loading as loading
 from MultiLabelTabPFN.src.tabpfn.architectures.base import (
     attention,
     bar_distribution,

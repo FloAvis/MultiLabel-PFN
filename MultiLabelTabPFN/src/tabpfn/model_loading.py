@@ -38,7 +38,7 @@ from MultiLabelTabPFN.src.tabpfn.settings import settings
 if TYPE_CHECKING:
     from sklearn.base import BaseEstimator
 
-    from tabpfn import TabPFNClassifier, TabPFNRegressor
+    from MultiLabelTabPFN.src.tabpfn import TabPFNClassifier, TabPFNRegressor
     from MultiLabelTabPFN.src.tabpfn.architectures.interface import Architecture, ArchitectureConfig
 
 logger = logging.getLogger(__name__)

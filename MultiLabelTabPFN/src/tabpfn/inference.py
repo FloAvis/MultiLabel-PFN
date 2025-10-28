@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class InferenceEngine(ABC):
-    """These define how tabpfn inference can be run.
+    """These define how MultiLabelTabPFN.src.tabpfn inference can be run.
 
     As there are many things that can be cached, with multiple ways to parallelize,
     `Executor` defines three primary things:

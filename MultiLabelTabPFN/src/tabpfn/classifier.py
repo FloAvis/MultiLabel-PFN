@@ -3,7 +3,7 @@
 !!! example
     ```python
     import sklearn.datasets
-    from tabpfn import TabPFNClassifier
+    from MultiLabelTabPFN.src.tabpfn import TabPFNClassifier
 
     model = TabPFNClassifier()
 

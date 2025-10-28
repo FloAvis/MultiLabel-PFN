@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import copy
 
-from tabpfn import TabPFNClassifier, TabPFNRegressor
+from MultiLabelTabPFN.src.tabpfn import TabPFNClassifier, TabPFNRegressor
 from MultiLabelTabPFN.src.tabpfn.base import ClassifierModelSpecs, RegressorModelSpecs
 
 # TODO: temporary new file, move to
