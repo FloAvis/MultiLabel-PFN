@@ -568,7 +568,7 @@ class Trainer:
         # Move to device
         micro_X = micro_X.to(self.config.device)
         micro_y = micro_y.to(self.config.device)
-        micro_d = micro_d.to(self.config.device)
+
 
         y_train = micro_y[:, :train_size]
         y_test = micro_y[:, train_size:]
@@ -578,6 +578,8 @@ class Trainer:
             self.model.require_backward_grad_sync = micro_batch_idx == num_micro_batches - 1
 
         with self.amp_ctx:
+
+            """
             pred = self.model(train_x=micro_X,
                         train_y=y_train,
                         test_x=micro_X,)  # (B, test_size, max_labels)
@@ -588,6 +590,18 @@ class Trainer:
             true = y_test.float().flatten(end_dim=-2)
 
             loss = F.binary_cross_entropy_with_logits(pred, true)
+            """
+
+            micro_X = micro_X.transpose(1, 0)
+            y_train = y_train.transpose(1, 0)
+
+            pred = self.model(micro_X, y_train)  # ( test_size, B,  max_labels)
+            pred = pred.flatten(end_dim=-2)
+            # true = y_test.long().flatten()
+            true = y_test.transpose(1,0).float().flatten(end_dim=-2)
+
+            loss = F.binary_cross_entropy_with_logits(pred, true)
+
 
 
         # Scale loss for gradient accumulation and backpropagate
