@@ -10,8 +10,8 @@ from typing import Any
 
 from torch import nn
 
-from tabpfn.architectures.base.config import ModelConfig
-from tabpfn.architectures.base.encoders import (
+from MultiLabelTabPFN.src.tabpfn.architectures.base.config import ModelConfig
+from MultiLabelTabPFN.src.tabpfn.architectures.base.encoders import (
     InputNormalizationEncoderStep,
     LinearInputEncoderStep,
     MulticlassClassificationTargetEncoder,
@@ -23,15 +23,15 @@ from tabpfn.architectures.base.encoders import (
     SequentialEncoder,
     VariableNumFeaturesEncoderStep,
 )
-from tabpfn.architectures.base.transformer import PerFeatureTransformer
-from tabpfn.architectures.interface import ArchitectureConfig
+from MultiLabelTabPFN.src.tabpfn.architectures.base.transformer import PerFeatureTransformer
+from MultiLabelTabPFN.src.tabpfn.architectures.interface import ArchitectureConfig
 
 
 def parse_config(config: dict[str, Any]) -> tuple[ArchitectureConfig, dict[str, Any]]:
     """Parse the config dict into a ModelConfig, a subclass of ArchitectureConfig.
 
     This method implements the interface defined in
-    tabpfn.architectures.interface.ArchitectureModule.parse_config().
+    MultiLabelTabPFN.src.tabpfn.architectures.interface.ArchitectureModule.parse_config().
 
     Unrecognised keys should be ignored during parsing, and returned in the `unused
     config items` dict.
@@ -59,7 +59,7 @@ def get_architecture(
     """Construct the base architecture following the given config.
 
     This factory method implements the interface defined in
-    tabpfn.architectures.interface.ArchitectureModule.get_architecture().
+    MultiLabelTabPFN.src.tabpfn.architectures.interface.ArchitectureModule.get_architecture().
 
     Args:
         config: The config returned by parse_config(). This method should use a

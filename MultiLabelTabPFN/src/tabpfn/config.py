@@ -8,7 +8,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Literal
 
-from tabpfn.preprocessing import PreprocessorConfig
+from MultiLabelTabPFN.src.tabpfn.preprocessing import PreprocessorConfig
 
 
 @dataclass

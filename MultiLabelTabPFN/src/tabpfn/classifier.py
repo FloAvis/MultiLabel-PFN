@@ -604,7 +604,7 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
         Args:
             X_preprocessed: The input features obtained from the preprocessed Dataset
                 The list contains one item for each ensemble predictor.
-                use tabpfn.utils.collate_for_tabpfn_dataset to use this function with
+                use MultiLabelTabPFN.src.tabpfn.utils.collate_for_tabpfn_dataset to use this function with
                 batch sizes of more than one dataset (see examples/tabpfn_finetune.py)
             y_preprocessed: The target variable obtained from the preprocessed Dataset
             cat_ix: categorical indices obtained from the preprocessed Dataset

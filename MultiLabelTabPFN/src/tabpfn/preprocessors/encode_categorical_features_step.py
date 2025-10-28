@@ -9,11 +9,11 @@ import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 
-from tabpfn.preprocessors.preprocessing_helpers import (
+from MultiLabelTabPFN.src.tabpfn.preprocessors.preprocessing_helpers import (
     FeaturePreprocessingTransformerStep,
     TransformResult,
 )
-from tabpfn.utils import infer_random_state
+from MultiLabelTabPFN.src.tabpfn.utils import infer_random_state
 
 
 def _get_least_common_category_count(x_column: np.ndarray) -> int:

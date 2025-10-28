@@ -18,15 +18,15 @@ import joblib
 import numpy as np
 import torch
 
-from tabpfn.architectures.base.memory import MemoryUsageEstimator
-from tabpfn.parallel_execute import parallel_execute
-from tabpfn.preprocessing import fit_preprocessing
-from tabpfn.utils import get_autocast_context
+from MultiLabelTabPFN.src.tabpfn.architectures.base.memory import MemoryUsageEstimator
+from MultiLabelTabPFN.src.tabpfn.parallel_execute import parallel_execute
+from MultiLabelTabPFN.src.tabpfn.preprocessing import fit_preprocessing
+from MultiLabelTabPFN.src.tabpfn.utils import get_autocast_context
 
 if TYPE_CHECKING:
-    from tabpfn.architectures.interface import Architecture
-    from tabpfn.preprocessing import EnsembleConfig
-    from tabpfn.preprocessors import SequentialFeatureTransformer
+    from MultiLabelTabPFN.src.tabpfn.architectures.interface import Architecture
+    from MultiLabelTabPFN.src.tabpfn.preprocessing import EnsembleConfig
+    from MultiLabelTabPFN.src.tabpfn.preprocessors import SequentialFeatureTransformer
 
 
 @dataclass

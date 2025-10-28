@@ -8,7 +8,7 @@ from functools import partial
 import torch
 from torch.utils.checkpoint import checkpoint
 
-from tabpfn.architectures.base.memory import support_save_peak_mem_factor
+from MultiLabelTabPFN.src.tabpfn.architectures.base.memory import support_save_peak_mem_factor
 
 
 class Activation(Enum):

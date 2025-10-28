@@ -9,10 +9,10 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 
-from tabpfn.preprocessors.preprocessing_helpers import (
+from MultiLabelTabPFN.src.tabpfn.preprocessors.preprocessing_helpers import (
     FeaturePreprocessingTransformerStep,
 )
-from tabpfn.utils import infer_random_state
+from MultiLabelTabPFN.src.tabpfn.utils import infer_random_state
 
 
 class NanHandlingPolynomialFeaturesStep(FeaturePreprocessingTransformerStep):

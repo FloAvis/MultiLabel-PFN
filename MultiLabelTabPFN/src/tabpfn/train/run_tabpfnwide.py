@@ -2,9 +2,9 @@
 from contextlib import nullcontext
 import datetime
 import os
-from tabpfn.model.loading import load_model_criterion_config
-from tabpfn.model.config import ModelConfig
-from tabpfn.model.memory import MemoryUsageEstimator
+from MultiLabelTabPFN.src.tabpfn.model.loading import load_model_criterion_config
+from MultiLabelTabPFN.src.tabpfn.model.config import ModelConfig
+from MultiLabelTabPFN.src.tabpfn.model.memory import MemoryUsageEstimator
 import torch
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP

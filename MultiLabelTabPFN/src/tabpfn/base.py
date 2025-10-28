@@ -11,32 +11,32 @@ from typing import TYPE_CHECKING, Any, Callable, Literal, Union, overload
 
 import torch
 
-from tabpfn.architectures.base.bar_distribution import FullSupportBarDistribution
-from tabpfn.config import ModelInterfaceConfig
+from MultiLabelTabPFN.src.tabpfn.architectures.base.bar_distribution import FullSupportBarDistribution
+from MultiLabelTabPFN.src.tabpfn.config import ModelInterfaceConfig
 
 # --- TabPFN imports ---
-from tabpfn.constants import (
+from MultiLabelTabPFN.src.tabpfn.constants import (
     AUTOCAST_DTYPE_BYTE_SIZE,
     DEFAULT_DTYPE_BYTE_SIZE,
     XType,
     YType,
 )
-from tabpfn.inference import (
+from MultiLabelTabPFN.src.tabpfn.inference import (
     InferenceEngine,
     InferenceEngineBatchedNoPreprocessing,
     InferenceEngineCacheKV,
     InferenceEngineCachePreprocessing,
     InferenceEngineOnDemand,
 )
-from tabpfn.model_loading import load_model_criterion_config
-from tabpfn.preprocessing import (
+from MultiLabelTabPFN.src.tabpfn.model_loading import load_model_criterion_config
+from MultiLabelTabPFN.src.tabpfn.preprocessing import (
     BaseDatasetConfig,
     ClassifierDatasetConfig,
     DatasetCollectionWithPreprocessing,
     RegressorDatasetConfig,
 )
-from tabpfn.settings import settings
-from tabpfn.utils import (
+from MultiLabelTabPFN.src.tabpfn.settings import settings
+from MultiLabelTabPFN.src.tabpfn.utils import (
     infer_devices,
     infer_fp16_inference_mode,
     infer_random_state,
@@ -48,10 +48,10 @@ if TYPE_CHECKING:
     import numpy as np
     import pandas as pd
 
-    from tabpfn.architectures.base.bar_distribution import FullSupportBarDistribution
-    from tabpfn.architectures.interface import Architecture, ArchitectureConfig
-    from tabpfn.classifier import TabPFNClassifier
-    from tabpfn.regressor import TabPFNRegressor
+    from MultiLabelTabPFN.src.tabpfn.architectures.base.bar_distribution import FullSupportBarDistribution
+    from MultiLabelTabPFN.src.tabpfn.architectures.interface import Architecture, ArchitectureConfig
+    from MultiLabelTabPFN.src.tabpfn.classifier import TabPFNClassifier
+    from MultiLabelTabPFN.src.tabpfn.regressor import TabPFNRegressor
 
 
 class BaseModelSpecs:

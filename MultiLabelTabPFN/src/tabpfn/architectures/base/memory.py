@@ -11,8 +11,8 @@ from typing import Any, Literal
 import numpy as np
 import torch
 
-from tabpfn.settings import settings
-from tabpfn.utils import get_total_memory_windows
+from MultiLabelTabPFN.src.tabpfn.settings import settings
+from MultiLabelTabPFN.src.tabpfn.utils import get_total_memory_windows
 
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = settings.pytorch.pytorch_cuda_alloc_conf
 SAVE_PEAK_MEM_FACTOR = 8

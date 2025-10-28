@@ -22,24 +22,24 @@ from sklearn.preprocessing import FunctionTransformer, OrdinalEncoder
 from sklearn.utils.multiclass import check_classification_targets
 from torch import nn
 
-from tabpfn.architectures.base.encoders import (
+from MultiLabelTabPFN.src.tabpfn.architectures.base.encoders import (
     MulticlassClassificationTargetEncoder,
     SequentialEncoder,
 )
-from tabpfn.constants import (
+from MultiLabelTabPFN.src.tabpfn.constants import (
     DEFAULT_NUMPY_PREPROCESSING_DTYPE,
     NA_PLACEHOLDER,
     REGRESSION_NAN_BORDER_LIMIT_LOWER,
     REGRESSION_NAN_BORDER_LIMIT_UPPER,
 )
-from tabpfn.misc._sklearn_compat import check_array, validate_data
+from MultiLabelTabPFN.src.tabpfn.misc._sklearn_compat import check_array, validate_data
 
 if TYPE_CHECKING:
     from sklearn.base import TransformerMixin
     from sklearn.pipeline import Pipeline
 
-    from tabpfn.classifier import TabPFNClassifier, XType, YType
-    from tabpfn.regressor import TabPFNRegressor
+    from MultiLabelTabPFN.src.tabpfn.classifier import TabPFNClassifier, XType, YType
+    from MultiLabelTabPFN.src.tabpfn.regressor import TabPFNRegressor
 
 MAXINT_RANDOM_SEED = int(np.iinfo(np.int32).max)
 
@@ -95,7 +95,7 @@ def get_embeddings(
     selected_data = data_map[data_source]
 
     # Avoid circular imports
-    from tabpfn.preprocessing import (  # noqa: PLC0415
+    from MultiLabelTabPFN.src.tabpfn.preprocessing import (  # noqa: PLC0415
         ClassifierEnsembleConfig,
         RegressorEnsembleConfig,
     )

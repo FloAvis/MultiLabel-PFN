@@ -11,11 +11,11 @@ from typing_extensions import override
 import torch
 from torch.utils.checkpoint import checkpoint
 
-from tabpfn.architectures.base.attention import Attention
-from tabpfn.architectures.base.memory import support_save_peak_mem_factor
+from MultiLabelTabPFN.src.tabpfn.architectures.base.attention import Attention
+from MultiLabelTabPFN.src.tabpfn.architectures.base.memory import support_save_peak_mem_factor
 
 if TYPE_CHECKING:
-    from tabpfn.architectures.base.config import ModelConfig
+    from MultiLabelTabPFN.src.tabpfn.architectures.base.config import ModelConfig
 
 try:
     from flash_attn.flash_attn_interface import (

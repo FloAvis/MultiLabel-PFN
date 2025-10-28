@@ -21,19 +21,19 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 
-from tabpfn.preprocessors.adaptive_quantile_transformer import (
+from MultiLabelTabPFN.src.tabpfn.preprocessors.adaptive_quantile_transformer import (
     AdaptiveQuantileTransformer,
 )
-from tabpfn.preprocessors.kdi_transformer import (
+from MultiLabelTabPFN.src.tabpfn.preprocessors.kdi_transformer import (
     KDITransformerWithNaN,
     get_all_kdi_transformers,
 )
-from tabpfn.preprocessors.preprocessing_helpers import (
+from MultiLabelTabPFN.src.tabpfn.preprocessors.preprocessing_helpers import (
     FeaturePreprocessingTransformerStep,
     TransformResult,
 )
-from tabpfn.preprocessors.safe_power_transformer import SafePowerTransformer
-from tabpfn.utils import infer_random_state
+from MultiLabelTabPFN.src.tabpfn.preprocessors.safe_power_transformer import SafePowerTransformer
+from MultiLabelTabPFN.src.tabpfn.utils import infer_random_state
 
 if TYPE_CHECKING:
     from sklearn.base import TransformerMixin

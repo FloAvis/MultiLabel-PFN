@@ -2,4 +2,4 @@
 
 from __future__ import annotations
 
-from tabpfn.model_loading import *  # noqa: F403
+from MultiLabelTabPFN.src.tabpfn.model_loading import *  # noqa: F403

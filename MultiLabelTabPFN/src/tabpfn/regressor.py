@@ -38,8 +38,8 @@ from sklearn.base import (
 from tabpfn_common_utils.telemetry import track_model_call
 from tabpfn_common_utils.telemetry.interactive import ping
 
-from tabpfn.architectures.base.bar_distribution import FullSupportBarDistribution
-from tabpfn.base import (
+from MultiLabelTabPFN.src.tabpfn.architectures.base.bar_distribution import FullSupportBarDistribution
+from MultiLabelTabPFN.src.tabpfn.base import (
     RegressorModelSpecs,
     check_cpu_warning,
     create_inference_engine,
@@ -47,17 +47,17 @@ from tabpfn.base import (
     get_preprocessed_datasets_helper,
     initialize_model_variables_helper,
 )
-from tabpfn.inference import InferenceEngine, InferenceEngineBatchedNoPreprocessing
-from tabpfn.model_loading import load_fitted_tabpfn_model, save_fitted_tabpfn_model
-from tabpfn.preprocessing import (
+from MultiLabelTabPFN.src.tabpfn.inference import InferenceEngine, InferenceEngineBatchedNoPreprocessing
+from MultiLabelTabPFN.src.tabpfn.model_loading import load_fitted_tabpfn_model, save_fitted_tabpfn_model
+from MultiLabelTabPFN.src.tabpfn.preprocessing import (
     DatasetCollectionWithPreprocessing,
     EnsembleConfig,
     PreprocessorConfig,
     RegressorEnsembleConfig,
     default_regressor_preprocessor_configs,
 )
-from tabpfn.preprocessors import get_all_reshape_feature_distribution_preprocessors
-from tabpfn.utils import (
+from MultiLabelTabPFN.src.tabpfn.preprocessors import get_all_reshape_feature_distribution_preprocessors
+from MultiLabelTabPFN.src.tabpfn.utils import (
     DevicesSpecification,
     fix_dtypes,
     get_embeddings,
@@ -77,10 +77,10 @@ if TYPE_CHECKING:
     from sklearn.pipeline import Pipeline
     from torch.types import _dtype
 
-    from tabpfn.architectures.interface import ArchitectureConfig
-    from tabpfn.config import ModelInterfaceConfig
-    from tabpfn.constants import XType, YType
-    from tabpfn.inference import InferenceEngine
+    from MultiLabelTabPFN.src.tabpfn.architectures.interface import ArchitectureConfig
+    from MultiLabelTabPFN.src.tabpfn.config import ModelInterfaceConfig
+    from MultiLabelTabPFN.src.tabpfn.constants import XType, YType
+    from MultiLabelTabPFN.src.tabpfn.inference import InferenceEngine
 
     try:
         from sklearn.base import Tags
@@ -662,7 +662,7 @@ class TabPFNRegressor(RegressorMixin, BaseEstimator):
         Args:
             X_preprocessed: The input features obtained from the preprocessed Dataset
                 The list contains one item for each ensemble predictor.
-                use tabpfn.utils.collate_for_tabpfn_dataset to use this function with
+                use MultiLabelTabPFN.src.tabpfn.utils.collate_for_tabpfn_dataset to use this function with
                 batch sizes of more than one dataset (see examples/tabpfn_finetune.py)
             y_preprocessed: The target variable obtained from the preprocessed Dataset
             cat_ix: categorical indices obtained from the preprocessed Dataset

@@ -12,13 +12,13 @@ import torch
 from torch import nn
 from torch.nn.modules.transformer import Module, Tensor
 
-from tabpfn.architectures.base.attention.full_attention import MultiHeadAttention
-from tabpfn.architectures.base.memory import support_save_peak_mem_factor
-from tabpfn.architectures.base.mlp import MLP
+from MultiLabelTabPFN.src.tabpfn.architectures.base.attention.full_attention import MultiHeadAttention
+from MultiLabelTabPFN.src.tabpfn.architectures.base.memory import support_save_peak_mem_factor
+from MultiLabelTabPFN.src.tabpfn.architectures.base.mlp import MLP
 
 if TYPE_CHECKING:
-    from tabpfn.architectures.base.attention import Attention
-    from tabpfn.architectures.base.config import ModelConfig
+    from MultiLabelTabPFN.src.tabpfn.architectures.base.attention import Attention
+    from MultiLabelTabPFN.src.tabpfn.architectures.base.config import ModelConfig
 
 HIDDEN_SIZE_LIMIT = 512
 MLP_SAVE_PEAK_MEM_FACTOR = 32

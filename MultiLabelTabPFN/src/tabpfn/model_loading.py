@@ -27,19 +27,19 @@ import joblib
 import torch
 from torch import nn
 
-from tabpfn.architectures import ARCHITECTURES
-from tabpfn.architectures.base.bar_distribution import (
+from MultiLabelTabPFN.src.tabpfn.architectures import ARCHITECTURES
+from MultiLabelTabPFN.src.tabpfn.architectures.base.bar_distribution import (
     BarDistribution,
     FullSupportBarDistribution,
 )
-from tabpfn.inference import InferenceEngine
-from tabpfn.settings import settings
+from MultiLabelTabPFN.src.tabpfn.inference import InferenceEngine
+from MultiLabelTabPFN.src.tabpfn.settings import settings
 
 if TYPE_CHECKING:
     from sklearn.base import BaseEstimator
 
     from tabpfn import TabPFNClassifier, TabPFNRegressor
-    from tabpfn.architectures.interface import Architecture, ArchitectureConfig
+    from MultiLabelTabPFN.src.tabpfn.architectures.interface import Architecture, ArchitectureConfig
 
 logger = logging.getLogger(__name__)
 

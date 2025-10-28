@@ -16,16 +16,16 @@ import torch
 from torch import nn
 from torch.utils.checkpoint import checkpoint
 
-from tabpfn.architectures.base.encoders import (
+from MultiLabelTabPFN.src.tabpfn.architectures.base.encoders import (
     LinearInputEncoderStep,
     NanHandlingEncoderStep,
     SequentialEncoder,
 )
-from tabpfn.architectures.base.layer import PerFeatureEncoderLayer
-from tabpfn.architectures.interface import Architecture
+from MultiLabelTabPFN.src.tabpfn.architectures.base.layer import PerFeatureEncoderLayer
+from MultiLabelTabPFN.src.tabpfn.architectures.interface import Architecture
 
 if TYPE_CHECKING:
-    from tabpfn.architectures.base.config import ModelConfig
+    from MultiLabelTabPFN.src.tabpfn.architectures.base.config import ModelConfig
 
 
 logger = logging.getLogger(__name__)

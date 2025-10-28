@@ -2,7 +2,7 @@
 inspired from sklearn's show_versions function. This collects useful debug
 information that can be used to report issues.
 
-Usage: import tabpfn; tabpfn.show_versions().
+Usage: import tabpfn; MultiLabelTabPFN.src.tabpfn.show_versions().
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ import subprocess
 import sys
 from collections import namedtuple
 from pathlib import Path
-from tabpfn.settings import settings
+from MultiLabelTabPFN.src.tabpfn.settings import settings
 
 try:
     import torch

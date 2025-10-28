@@ -19,14 +19,14 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-from tabpfn.architectures.base.bar_distribution import FullSupportBarDistribution
-from tabpfn.constants import (
+from MultiLabelTabPFN.src.tabpfn.architectures.base.bar_distribution import FullSupportBarDistribution
+from MultiLabelTabPFN.src.tabpfn.constants import (
     CLASS_SHUFFLE_OVERESTIMATE_FACTOR,
     MAXIMUM_FEATURE_SHIFT,
     PARALLEL_MODE_TO_RETURN_AS,
     SUPPORTS_RETURN_AS,
 )
-from tabpfn.preprocessors import (
+from MultiLabelTabPFN.src.tabpfn.preprocessors import (
     AddFingerprintFeaturesStep,
     DifferentiableZNormStep,
     EncodeCategoricalFeaturesStep,
@@ -37,7 +37,7 @@ from tabpfn.preprocessors import (
     SequentialFeatureTransformer,
     ShuffleFeaturesStep,
 )
-from tabpfn.utils import infer_random_state
+from MultiLabelTabPFN.src.tabpfn.utils import infer_random_state
 
 if TYPE_CHECKING:
     import numpy.typing as npt

@@ -11,7 +11,7 @@ import pydantic
 from pydantic import PositiveInt
 from pydantic.dataclasses import dataclass
 
-from tabpfn.architectures.interface import ArchitectureConfig
+from MultiLabelTabPFN.src.tabpfn.architectures.interface import ArchitectureConfig
 
 logger = logging.getLogger(__name__)
 
