@@ -31,8 +31,8 @@ import torch
 from sklearn import config_context
 from sklearn.base import BaseEstimator, ClassifierMixin, check_is_fitted
 from sklearn.preprocessing import LabelEncoder
-from MultiLabelTabPFN.src.tabpfn_common_utils.telemetry import track_model_call
-from MultiLabelTabPFN.src.tabpfn_common_utils.telemetry.interactive import ping
+from tabpfn_common_utils.telemetry import track_model_call
+from tabpfn_common_utils.telemetry.interactive import ping
 
 from MultiLabelTabPFN.src.tabpfn.base import (
     check_cpu_warning,
@@ -73,8 +73,8 @@ if TYPE_CHECKING:
     from sklearn.compose import ColumnTransformer
     from torch.types import _dtype
 
-    from tabpfn.architectures.interface import ArchitectureConfig
-    from tabpfn.config import ModelInterfaceConfig
+    from MultiLabelTabPFN.src.tabpfn.architectures.interface import ArchitectureConfig
+    from MultiLabelTabPFN.src.tabpfn.config import ModelInterfaceConfig
 
     try:
         from sklearn.base import Tags
