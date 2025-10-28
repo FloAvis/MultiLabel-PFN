@@ -170,6 +170,7 @@ def build_parser():
         help="If True, compile the model using torch.compile for speedup",
     )
 
+    parser.add_argument("--cache_trainset_representation", type=str2bool, default=False, help="If True, the model should be configured to cache the training data during inference to improve speed.")
     parser.add_argument("--emsize", type=int, default=192, help="Embedding size for the model.")
     parser.add_argument("--features_per_group", type=int, default=1, help="Number of features per group.")
     parser.add_argument("--nlayers", type=int, default=12, help="Number of layers in the model.")
