@@ -184,6 +184,7 @@ class Trainer:
             "dropout": self.config.dropout,
             "activation": self.config.activation,
             "norm_first": self.config.norm_first,
+            "label_learning":self.config.label_learning
         }
 
         model = TabICL(**self.model_config)

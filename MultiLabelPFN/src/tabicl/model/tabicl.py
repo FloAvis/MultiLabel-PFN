@@ -93,9 +93,12 @@ class TabICL(nn.Module):
         dropout: float = 0.0,
         activation: str | callable = "gelu",
         norm_first: bool = True,
+        label_learning: bool = False,
     ):
         super().__init__()
         self.max_labels = max_labels
+
+        self.label_learning=label_learning
 
         if max_classes is not None:
             self.max_labels = max_classes
@@ -139,6 +142,33 @@ class TabICL(nn.Module):
             norm_first=norm_first,
         )
 
+
+        if self.label_learning:
+            # column and rowwise embedders for labels
+            self.col_embedder_lab = ColEmbedding(
+                embed_dim=embed_dim,
+                num_blocks=col_num_blocks,
+                nhead=col_nhead,
+                num_inds=col_num_inds,
+                dim_feedforward=embed_dim * ff_factor,
+                dropout=dropout,
+                activation=activation,
+                norm_first=norm_first,
+                reserve_cls_tokens=row_num_cls,
+            )
+
+            self.row_interactor_lab = RowInteraction(
+                embed_dim=embed_dim,
+                num_blocks=row_num_blocks,
+                nhead=row_nhead,
+                num_cls=row_num_cls,
+                rope_base=row_rope_base,
+                dim_feedforward=embed_dim * ff_factor,
+                dropout=dropout,
+                activation=activation,
+                norm_first=norm_first,
+            )
+
         icl_dim = embed_dim * row_num_cls  # CLS tokens are concatenated for ICL
         self.icl_predictor = ICLearning(
             max_labels=max_labels,
@@ -149,6 +179,7 @@ class TabICL(nn.Module):
             dropout=dropout,
             activation=activation,
             norm_first=norm_first,
+            label_learning=label_learning,
         )
 
     def _train_forward(
@@ -192,8 +223,16 @@ class TabICL(nn.Module):
             self.col_embedder(X, d=d, train_size=None if embed_with_test else train_size), d=d
         )
 
-        # Dataset-wise in-context learning
-        out = self.icl_predictor(representations, y_train=y_train)
+        if self.label_learning:
+            representations_labels = self.row_interactor_lab(
+                self.col_embedder_lab(y_train, train_size=None if embed_with_test else train_size)
+            )
+
+            # Dataset-wise in-context learning
+            out = self.icl_predictor(representations, y_train=y_train, L=representations_labels)
+        else:
+            # Dataset-wise in-context learning
+            out = self.icl_predictor(representations, y_train=y_train)
 
         return out
 
@@ -260,13 +299,35 @@ class TabICL(nn.Module):
             mgr_config=inference_config.ROW_CONFIG,
         )
 
-        # Dataset-wise in-context learning
-        out = self.icl_predictor(
-            representations,
-            y_train=y_train,
-            return_logits=return_logits,
-            mgr_config=inference_config.ICL_CONFIG,
-        )
+        if self.label_learning:
+            # Column-wise embedding -> Row-wise interaction
+            representations_labels = self.row_interactor_lab(
+                self.col_embedder_lab(
+                    y_train,
+                    train_size=None if embed_with_test else train_size,
+                    feature_shuffles=feature_shuffles,
+                    mgr_config=inference_config.COL_CONFIG,
+                ),
+                mgr_config=inference_config.ROW_CONFIG,
+            )
+
+            # Dataset-wise in-context learning
+            out = self.icl_predictor(
+                representations,
+                L=representations_labels,
+                y_train=y_train,
+                return_logits=return_logits,
+                mgr_config=inference_config.ICL_CONFIG,
+            )
+
+        else:
+            # Dataset-wise in-context learning
+            out = self.icl_predictor(
+                representations,
+                y_train=y_train,
+                return_logits=return_logits,
+                mgr_config=inference_config.ICL_CONFIG,
+            )
 
         return out
 

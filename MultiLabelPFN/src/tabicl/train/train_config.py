@@ -189,6 +189,7 @@ def build_parser():
     parser.add_argument("--icl_nhead", type=int, default=4, help="Number of attention heads in ICL predictor")
     parser.add_argument("--freeze_icl", default=False, type=str2bool, help="Whether to freeze the ICL predictor")
     parser.add_argument("--freeze_icl_finetune", default=False, type=str2bool, help="Whether to freeze the ICL main block predictor while keeping label encoder and decoder")
+    parser.add_argument("--label_learning", default=False, type=str2bool, help="Whether using row and column encoding architecture aslo for labels")
 
     # Shared Architecture Config
     parser.add_argument("--ff_factor", type=int, default=2, help="Expansion factor for feedforward dimensions")

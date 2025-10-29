@@ -59,10 +59,13 @@ class ICLearning(nn.Module):
         dropout: float = 0.0,
         activation: str | callable = "gelu",
         norm_first: bool = True,
+        label_learning: bool = False,
     ):
         super().__init__()
         self.max_labels = max_labels
         self.norm_first = norm_first
+
+        self.label_learning = label_learning
 
         self.tf_icl = Encoder(
             num_blocks=num_blocks,
@@ -76,7 +79,8 @@ class ICLearning(nn.Module):
         if self.norm_first:
             self.ln = nn.LayerNorm(d_model)
 
-        self.y_encoder = LabelLinear(max_labels, d_model)
+        if not self.label_learning:
+            self.y_encoder = LabelLinear(max_labels, d_model)
 
         self.decoder = nn.Sequential(nn.Linear(d_model, d_model * 2), nn.GELU(), nn.Linear(d_model * 2, max_labels))
 
@@ -202,7 +206,7 @@ class ICLearning(nn.Module):
         indices = unique_vals.argsort()
         return indices[torch.searchsorted(unique_vals, y)]
 
-    def _icl_predictions(self, R: Tensor, y_train: Tensor) -> Tensor:
+    def _icl_predictions(self, R: Tensor, y_train: Tensor, L: Tensor = None) -> Tensor:
         """In-context learning predictions.
 
         Parameters
@@ -219,7 +223,11 @@ class ICLearning(nn.Module):
         """
 
         train_size = y_train.shape[1]
-        R[:, :train_size] = R[:, :train_size] + self.y_encoder(y_train.float())          #adding up of tensors
+
+        if not self.label_learning:
+            R[:, :train_size] = R[:, :train_size] + self.y_encoder(y_train.float())          #adding up of tensors
+        else:
+            R[:, :train_size] = R[:, :train_size] + L[:, :train_size]
         src = self.tf_icl(R, attn_mask=train_size)
         if self.norm_first:
             src = self.ln(src)
@@ -231,6 +239,7 @@ class ICLearning(nn.Module):
         self,
         R: Tensor,
         y_train: Tensor,
+        L: Tensor=None,
         return_logits: bool = False,
         auto_batch: bool = True,
     ) -> Tensor:
@@ -261,7 +270,7 @@ class ICLearning(nn.Module):
         train_size = y_train.shape[1]
         num_labels = y_train.shape[2]
         out = self.inference_mgr(
-            self._icl_predictions, inputs=OrderedDict([("R", R), ("y_train", y_train)]), auto_batch=auto_batch
+            self._icl_predictions, inputs=OrderedDict([("R", R), ("y_train", y_train), ("L", L)]), auto_batch=auto_batch
         )
         out = out[:, train_size:, :num_labels]
 
@@ -347,6 +356,7 @@ class ICLearning(nn.Module):
         self,
         R: Tensor,
         y_train: Tensor,
+        L:Tensor=None,
         return_logits: bool = True,
         softmax_temperature: float = 0.9,
         mgr_config: MgrConfig = None,
@@ -399,9 +409,14 @@ class ICLearning(nn.Module):
 
         if num_labels <= self.max_labels:
             # Standard classification
-            out = self._predict_standard(
-                R, y_train, return_logits=return_logits
-            )
+            if self.label_learning:
+                out = self._predict_standard(
+                    R, y_train, L, return_logits=return_logits
+                )
+            else:
+                out = self._predict_standard(
+                    R, y_train, return_logits=return_logits
+                )
         else:
             # Hierarchical classification
             out = []
@@ -424,6 +439,7 @@ class ICLearning(nn.Module):
         self,
         R: Tensor,
         y_train: Tensor,
+        L: Tensor = None,
         return_logits: bool = True,
         softmax_temperature: float = 0.9,
         mgr_config: MgrConfig = None,
@@ -463,9 +479,12 @@ class ICLearning(nn.Module):
 
         if self.training:
             train_size = y_train.shape[1]
-            out = self._icl_predictions(R, y_train)
+            if self.label_learning:
+                out = self._icl_predictions(R, y_train, L)
+            else:
+                out = self._icl_predictions(R, y_train)
             out = out[:, train_size:]
         else:
-            out = self._inference_forward(R, y_train, return_logits, softmax_temperature, mgr_config)
+            out = self._inference_forward(R, y_train, L, return_logits, softmax_temperature, mgr_config)
 
         return out
