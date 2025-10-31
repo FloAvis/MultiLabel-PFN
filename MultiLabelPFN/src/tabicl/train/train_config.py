@@ -54,7 +54,7 @@ def build_parser():
 
     # Optimization Config
     parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate")
-    parser.add_argument("--loss", type=float, default="bce", help="Loss function: bce: Binary cross entropy, zlpr: zero bound log-sum-exp and Pairwise Rank based")
+    parser.add_argument("--loss", type=str, default="bce", help="Loss function: bce: Binary cross entropy, zlpr: zero bound log-sum-exp and Pairwise Rank based")
     parser.add_argument(
         "--scheduler", type=str, default="cosine_warmup", help="Learning rate scheduler: see optim.py for options."
     )
