@@ -339,6 +339,7 @@ class Trainer:
             return
 
         print(f"Loading checkpoint from {checkpoint_path}")
+        torch.serialization.add_safe_globals([MultiLabelTabPFN.src.tabpfn.architectures.base.config.ModelConfig])
         checkpoint = torch.load(checkpoint_path, map_location=self.config.device, weights_only=True)
 
         # Load model state
