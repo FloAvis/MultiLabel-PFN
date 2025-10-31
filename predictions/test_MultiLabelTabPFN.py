@@ -56,7 +56,7 @@ def main():
         X = df.filter(regex=feature_prefix)
         Y = df.filter(regex=label_prefix)
 
-        drugs= list(y.columns.values)
+        drugs= list(Y.columns.values)
 
         for model in models:
             #multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
