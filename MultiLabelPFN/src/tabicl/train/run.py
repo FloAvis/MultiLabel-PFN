@@ -607,21 +607,16 @@ class Trainer:
 
         with self.amp_ctx:
             pred = self.model(micro_X, y_train, micro_d)  # (B, test_size, max_labels)
-            if self.config.loss == "bce":
-                pred = pred.flatten(end_dim=-2)
-                #true = y_test.long().flatten()
-                true = y_test.float().flatten(end_dim=-2)
 
+            pred = pred.flatten(end_dim=-2)
+            #true = y_test.long().flatten()
+            true = y_test.float().flatten(end_dim=-2)
+
+            if self.config.loss == "bce":
                 loss = F.binary_cross_entropy_with_logits(pred, true)
 
             if self.config.loss == "zlpr":
-                #pred = pred.flatten(end_dim=-2)
-                print("Pred shape: ", pred.shape)
-                # true = y_test.long().flatten()
-                print("True shape: ", y_test.shape)
-                #true = y_test.float().flatten(end_dim=-2)
-
-                loss = zlpr_loss(pred, y_test.float())
+                loss = zlpr_loss(pred, true)
 
         # Scale loss for gradient accumulation and backpropagate
         scaled_loss = loss / num_micro_batches
