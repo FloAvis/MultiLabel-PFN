@@ -61,6 +61,13 @@ def ddp_cleanup(func):
 
     return wrapper
 
+def zlpr_loss(y_pred, y_true, reduce: bool = True):
+    loss = torch.log(1+ torch.sum(torch.mul(torch.exp(-y_pred), y_true), dim=-1)) + torch.log(1 + torch.sum(torch.mul(torch.exp(y_pred), 1 - y_true), dim=-1))
+
+    if reduce:
+        loss = torch.mean(loss)
+
+    return loss
 
 class Trainer:
     """This class handles the complete training lifecycle for TabICL, including:
@@ -600,12 +607,21 @@ class Trainer:
 
         with self.amp_ctx:
             pred = self.model(micro_X, y_train, micro_d)  # (B, test_size, max_labels)
-            pred = pred.flatten(end_dim=-2)
-            #true = y_test.long().flatten()
-            true = y_test.float().flatten(end_dim=-2)
+            if self.config.loss == "bce":
+                pred = pred.flatten(end_dim=-2)
+                #true = y_test.long().flatten()
+                true = y_test.float().flatten(end_dim=-2)
 
-            loss = F.binary_cross_entropy_with_logits(pred, true)
+                loss = F.binary_cross_entropy_with_logits(pred, true)
 
+            if self.config.loss == "zlpr":
+                #pred = pred.flatten(end_dim=-2)
+                print("Pred shape: ", pred.shape)
+                # true = y_test.long().flatten()
+                print("True shape: ", y_test.shape)
+                #true = y_test.float().flatten(end_dim=-2)
+
+                loss = zlpr_loss(pred, y_test.float())
 
         # Scale loss for gradient accumulation and backpropagate
         scaled_loss = loss / num_micro_batches
