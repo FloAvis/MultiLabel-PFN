@@ -21,7 +21,7 @@ from MultiLabelPFN.src.tabicl import TabICLClassifier
 def main():
 
 
-    files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt", r"../data/NNRTI_DataSet.txt"]
+    files = [r"../data/Other_datasets/scene.csv"]
     #models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
     #files = [r"../data/PI_DataSet.txt"]
 
@@ -36,10 +36,27 @@ def main():
         "tabicl-classifier-v1.1-0506.ckpt",
         "random_test/step-1.ckpt"]
 
+    feature_prefix = "F"
+    label_prefix = "T"
+
+    version = "_scene_dataset"
+
+    use_kfold = True
+    folds = 5
+
+
+
     for file in files:
 
 
-        X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
+        #X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
+
+        df = pd.read_csv(file)
+
+        X = df.filter(regex=feature_prefix)
+        Y = df.filter(regex=label_prefix)
+
+        drugs= list(y.columns.values)
 
         for model in models:
             #multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
@@ -47,10 +64,6 @@ def main():
             multi_target_pfn = TabICLClassifier(model_path="../my/" + model, allow_auto_download=False, average_logits=True,
                                                 n_jobs=2, verbose=True, use_hierarchical=False)
 
-            use_kfold = True
-            folds = 5
-
-            version = "_new_loss_sigmoid"
 
             if use_kfold == False:
 
