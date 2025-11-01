@@ -56,6 +56,9 @@ def main():
         X = df.filter(regex=feature_prefix)
         Y = df.filter(regex=label_prefix)
 
+        print(X)
+        print(Y)
+
         drugs= list(Y.columns.values)
 
         for model in models:
