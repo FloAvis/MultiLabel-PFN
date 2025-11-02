@@ -938,6 +938,7 @@ class PriorDataset(IterableDataset):
         min_features: int = 2,
         max_features: int = 100,
         max_labels: int = 10,
+        cat_prob:float = 0.2,
         min_quan: float = 0.5,
         max_quan: float = 0.95,
         min_seq_len: Optional[int] = None,
@@ -954,6 +955,10 @@ class PriorDataset(IterableDataset):
         num_threads_per_generate: int = 1,
         device: str = "cpu",
     ):
+
+        tmp_scm_fixed_hp = scm_fixed_hp
+        tmp_scm_fixed_hp["cat_prob"] = cat_prob
+
         super().__init__()
         if prior_type == "dummy":
             self.prior = DummyPrior(
@@ -986,7 +991,7 @@ class PriorDataset(IterableDataset):
                 max_train_size=max_train_size,
                 replay_small=replay_small,
                 prior_type=prior_type,
-                fixed_hp=scm_fixed_hp,
+                fixed_hp=tmp_scm_fixed_hp,
                 sampled_hp=scm_sampled_hp,
                 n_jobs=n_jobs,
                 num_threads_per_generate=num_threads_per_generate,
