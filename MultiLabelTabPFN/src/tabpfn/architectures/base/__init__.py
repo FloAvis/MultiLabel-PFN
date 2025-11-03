@@ -46,6 +46,7 @@ def parse_config(config: dict[str, Any]) -> tuple[ArchitectureConfig, dict[str, 
         pydantic.ValidationError: one or more of the values have the wrong type
     """
     #upgraded_dict = ModelConfig.upgrade_config(config)
+    print(type(config))
     parsed_config = ModelConfig(**config)
     return parsed_config, parsed_config.get_unused_config(config)
 
