@@ -24,7 +24,7 @@ def main():
     files = [r"../data/Other_datasets/scene.csv"]
     #models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
     #files = [r"../data/PI_DataSet.txt"]
-
+    '''
     models = [
         "finetune_step-1250.ckpt",
         "finetune_stage3_step-50.ckpt",
@@ -35,11 +35,23 @@ def main():
         "full_model_step-1000.ckpt",
         "tabicl-classifier-v1.1-0506.ckpt",
         "random_test/step-1.ckpt"]
+    '''
+
+    models = [
+        "finetune_step-3300.ckpt",
+        "bal_prior_step-1700.ckpt",
+        "full_model_step-2900.ckpt",
+        "label_enc_step-1000.ckpt",
+        "label_enc_step-2300.ckpt",
+        "tabpfn_full_step-1000.ckpt",
+        "tabpfn_full_step-1600.ckpt",
+        "zlpr_loss_step-300.ckpt"
+    ]
 
     feature_prefix = "F"
     label_prefix = "T"
 
-    version = "_scene_dataset"
+    version = "_new_loss_sigmoid"
 
     use_kfold = True
     folds = 5
@@ -49,17 +61,19 @@ def main():
     for file in files:
 
 
-        #X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
+        X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
 
+        '''
         df = pd.read_csv(file, true_values=["b'1'"], false_values=["b'0'"], dtype=float)
 
         X = df.filter(regex=feature_prefix)
         Y = df.filter(regex=label_prefix)
-
+        
         #print(X)
         #print(Y)
 
         drugs= list(Y.columns.values)
+        '''
 
         for model in models:
             #multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)

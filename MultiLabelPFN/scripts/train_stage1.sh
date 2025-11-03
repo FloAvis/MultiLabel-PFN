@@ -127,6 +127,10 @@ torchrun --standalone --nproc_per_node=1 ./MultiLabelPFN/src/tabicl/train/run.py
 
 torchrun --standalone --nproc_per_node=1 ./MultiLabelPFN/src/tabicl/train/run.py --wandb_log True --wandb_project MultiLabelTabICL --wandb_name zlpr_loss_Stage1 --wandb_dir ./my/wandb/dir --wandb_mode online --device cuda --dtype float32 --np_seed 42 --torch_seed 42 --max_steps 10000 --batch_size 512 --micro_batch_size 4 --lr 1e-4 --loss zlpr --scheduler cosine_warmup --warmup_proportion 0.02 --gradient_clipping 1.0 --prior_type mix_scm --prior_device cuda --batch_size_per_gp 4 --min_features 2 --max_features 100 --max_labels 10 --max_seq_len 1024 --min_train_size 0.1 --max_train_size 0.9 --embed_dim 128 --col_num_blocks 3 --col_nhead 4 --col_num_inds 128 --row_num_blocks 3 --row_nhead 8 --row_num_cls 4 --row_rope_base 100000 --icl_num_blocks 12 --icl_nhead 4 --ff_factor 2 --norm_first True --checkpoint_dir ./my/zlpr_loss_stage1/checkpoint/dir --save_temp_every 50 --save_perm_every 1000
 
+# only categorical features:
+
+torchrun --standalone --nproc_per_node=1 ./MultiLabelPFN/src/tabicl/train/run.py --wandb_log True --wandb_project MultiLabelTabICL --wandb_name cat_feat_Stage1 --wandb_dir ./my/wandb/dir --wandb_mode online --device cuda --dtype float32 --np_seed 42 --torch_seed 42 --max_steps 10000 --batch_size 256 --micro_batch_size 4 --lr 1e-4 --scheduler cosine_warmup --warmup_proportion 0.02 --gradient_clipping 1.0 --prior_type mix_scm --prior_device cuda --batch_size_per_gp 4 --min_features 2 --max_features 100 --max_labels 10 --max_seq_len 1024 --cat_prob 1.1 --min_train_size 0.1 --max_train_size 0.9 --embed_dim 128 --col_num_blocks 3 --col_nhead 4 --col_num_inds 128 --row_num_blocks 3 --row_nhead 8 --row_num_cls 4 --row_rope_base 100000 --icl_num_blocks 12 --icl_nhead 4 --ff_factor 2 --norm_first True --checkpoint_dir ./my/cat_feat_stage1/checkpoint/dir --save_temp_every 50 --save_perm_every 1000
+
 
 # ------------------------------------------------------
 # Save prior datasets to disk and load them for training
