@@ -827,7 +827,7 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
 
         # Ensure probabilities sum to 1 in case of minor floating point inaccuracies
         # going from torch to numpy
-        return output / output.sum(axis=1, keepdims=True)  # type: ignore
+        return output
 
     def _apply_temperature(self, logits: torch.Tensor) -> torch.Tensor:
         """Scales logits by the softmax temperature."""
@@ -841,7 +841,7 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
 
     def _apply_softmax(self, logits: torch.Tensor) -> torch.Tensor:
         """Applies the softmax function to the last dimension."""
-        return torch.nn.functional.softmax(logits, dim=-1)
+        return torch.nn.functional.sigmoid(logits)
 
     def _apply_balancing(self, probas: torch.Tensor) -> torch.Tensor:
         """Applies class balancing to a probability tensor."""

@@ -55,11 +55,8 @@ def main():
     ]
     '''
 
-    models = [
-        "finetune_step-3300.ckpt",
-        "bal_prior_step-1700.ckpt",
-        "full_model_step-2900.ckpt"
-    ]
+    models = ["tabpfn_full_step-1000.ckpt",
+        "tabpfn_full_step-1600.ckpt"]
 
     #models = ["label_enc_step-1000.ckpt",
     #    "label_enc_step-2300.ckpt"]
@@ -95,10 +92,10 @@ def main():
         for model in models:
             #multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
 
-            multi_target_pfn = TabICLClassifier(model_path="../my/" + model, allow_auto_download=False, average_logits=True,
-                                                n_jobs=2, verbose=True, use_hierarchical=False)
+            #multi_target_pfn = TabICLClassifier(model_path="../my/" + model, allow_auto_download=False, average_logits=True,
+            #                                    n_jobs=2, verbose=True, use_hierarchical=False)
 
-            #multi_target_pfn = TabPFNClassifier(model_path="../my/" + model, n_preprocessing_jobs=2, random_state=42)
+            multi_target_pfn = TabPFNClassifier(model_path="../my/" + model, n_preprocessing_jobs=2, random_state=42, average_before_softmax=True)
 
 
             if use_kfold == False:
