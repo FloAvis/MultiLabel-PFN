@@ -540,6 +540,7 @@ def load_model(
     # `True`, dissallowing loading of arbitrary objects.
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=FutureWarning)
+        torch.serialization.add_safe_globals([ModelConfig])
         checkpoint = torch.load(path, map_location="cpu", weights_only=None)
 
     try:
