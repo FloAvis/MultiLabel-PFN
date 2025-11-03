@@ -36,7 +36,7 @@ def main():
         "full_model_step-1000.ckpt",
         "tabicl-classifier-v1.1-0506.ckpt",
         "random_test/step-1.ckpt"]
-    '''
+    
 
     models = [
         "finetune_step-3300.ckpt",
@@ -48,6 +48,10 @@ def main():
         "tabpfn_full_step-1600.ckpt",
         "zlpr_loss_step-300.ckpt"
     ]
+    '''
+
+
+    models = ["zlpr_loss_step-300.ckpt"]
 
     feature_prefix = "F"
     label_prefix = "T"
