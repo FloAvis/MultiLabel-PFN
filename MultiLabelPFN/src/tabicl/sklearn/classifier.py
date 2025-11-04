@@ -392,6 +392,8 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         init_config = {
             "COL_CONFIG": {"device": self.device_, "use_amp": self.use_amp, "verbose": self.verbose},
             "ROW_CONFIG": {"device": self.device_, "use_amp": self.use_amp, "verbose": self.verbose},
+            "COL_LAB_CONFIG": {"device": self.device_, "use_amp": self.use_amp, "verbose": self.verbose},
+            "ROW_LAB_CONFIG": {"device": self.device_, "use_amp": self.use_amp, "verbose": self.verbose},
             "ICL_CONFIG": {"device": self.device_, "use_amp": self.use_amp, "verbose": self.verbose},
         }
         # If None, default settings in InferenceConfig

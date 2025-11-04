@@ -127,6 +127,8 @@ class InferenceConfig:
 
     COL_CONFIG: MgrConfig = None
     ROW_CONFIG: MgrConfig = None
+    COL_LAB_CONFIG: MgrConfig = None
+    ROW_LAB_CONFIG: MgrConfig = None
     ICL_CONFIG: MgrConfig = None
 
     def __post_init__(self):
@@ -157,8 +159,39 @@ class InferenceConfig:
                 use_amp=True,
                 verbose=False,
             )
-        elif not isinstance(self.ROW_CONFIG, MgrConfig):
+        elif not isinstance(self.ROW_LAB_CONFIG, MgrConfig):
             raise TypeError(f"ROW_CONFIG must be a dict or MgrConfig, got {type(self.ROW_CONFIG)}")
+
+        if isinstance(self.COL_LAB_CONFIG, dict):
+            self.COL_LAB_CONFIG = MgrConfig(**self.COL_LAB_CONFIG)
+        elif self.COL_LAB_CONFIG is None:
+            self.COL_LAB_CONFIG = MgrConfig(
+                min_batch_size=1,
+                safety_factor=0.8,
+                offload="auto",
+                auto_offload_pct=0.5,
+                device=None,
+                use_amp=True,
+                verbose=False,
+            )
+        elif not isinstance(self.COL_LAB_CONFIG, MgrConfig):
+            raise TypeError(f"COL_CONFIG must be a dict or MgrConfig, got {type(self.COL_LAB_CONFIG)}")
+
+        if isinstance(self.ROW_LAB_CONFIG, dict):
+            self.ROW_LAB_CONFIG = MgrConfig(**self.ROW_LAB_CONFIG)
+        elif self.ROW_LAB_CONFIG is None:
+            self.ROW_LAB_CONFIG = MgrConfig(
+                min_batch_size=1,
+                safety_factor=0.8,
+                offload=False,
+                auto_offload_pct=0.5,
+                device=None,
+                use_amp=True,
+                verbose=False,
+            )
+        elif not isinstance(self.ROW_LAB_CONFIG, MgrConfig):
+            raise TypeError(f"ROW_CONFIG must be a dict or MgrConfig, got {type(self.ROW_LAB_CONFIG)}")
+
 
         if isinstance(self.ICL_CONFIG, dict):
             self.ICL_CONFIG = MgrConfig(**self.ICL_CONFIG)
@@ -188,7 +221,7 @@ class InferenceConfig:
         KeyError
             If dictionary contains keys other than the allowed configuration names
         """
-        allowed_keys = {"COL_CONFIG", "ROW_CONFIG", "ICL_CONFIG"}
+        allowed_keys = {"COL_CONFIG", "ROW_CONFIG","COL_LAB_CONFIG", "ROW_LAB_CONFIG", "ICL_CONFIG"}
         for key in config_dict:
             if key not in allowed_keys:
                 raise KeyError(f"Invalid config key: {key}. Allowed keys: {allowed_keys}")
