@@ -473,8 +473,8 @@ class PerFeatureTransformer(Architecture):
         y["main"][single_eval_pos:] = torch.nan
 
         print(y)
-        print(y.shape)
-        print(type(y))
+        print(y.keys())
+        print(self.y_encoder)
 
         embedded_y = self.y_encoder(
             y,
