@@ -550,13 +550,18 @@ def load_model(
     architecture = ARCHITECTURES[architecture_name]
     state_dict = checkpoint["state_dict"]
 
+    print(checkpoint["config"])
+    config = checkpoint["config"]
 
+    """   
     config, unused_config = architecture.parse_config(checkpoint["config"])
+    
+
     logger.debug(
         "Keys in config that were not parsed by architecture config: "
         f"{', '.join(unused_config.keys())}"
     )
-
+    """
 
     criterion_state_keys = [k for k in state_dict if "criterion." in k]
     loss_criterion = get_loss_criterion(config)
