@@ -500,6 +500,7 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
         )
 
         print("After validate: ", X.shape)
+        print(type(X))
 
         check_cpu_warning(
             self.devices_, X, allow_cpu_override=self.ignore_pretraining_limits

@@ -422,9 +422,9 @@ if sklearn_version < parse_version("1.6"):
             no_val_X = isinstance(X, str) and X == "no_validation"
             no_val_y = y is None or (isinstance(y, str) and y == "no_validation")
             if not no_val_X and no_val_y:
-                out = X
+                out = np.array(X)
             elif no_val_X and not no_val_y:
-                out = y
+                out = np.array(y)
             else:
                 out = np.array(X), np.array(y)
             return out
