@@ -330,7 +330,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         assert "config" in checkpoint, "The checkpoint doesn't contain the model configuration."
         assert "state_dict" in checkpoint, "The checkpoint doesn't contain the model state."
 
-        print(checkpoint["config"])
+        #print(checkpoint["config"])
 
         self.model_path_ = model_path_
         self.model_ = TabICL(**checkpoint["config"])

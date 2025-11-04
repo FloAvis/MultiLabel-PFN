@@ -279,6 +279,9 @@ class ColEmbedding(nn.Module):
                 if self.reserve_cls_tokens > 0:
                     mapping = [m + self.reserve_cls_tokens for m in mapping]
                     mapping = list(range(self.reserve_cls_tokens)) + mapping
+                print(embeddings.shape)
+                print(mapping)
+                print(first_embeddings.shape)
                 embeddings[i] = first_embeddings[mapping]
 
         return embeddings.transpose(1, 2)  # (B, T, H+C, E)
