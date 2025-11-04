@@ -557,8 +557,12 @@ def infer_categorical_features(
     large_enough_x_to_infer_categorical = X.shape[0] > min_samples_for_inference
     indices = []
 
+    print("Transposed X: ", X.T.shape)
+    print(type(X))
     for ix, col in enumerate(X.T):
         # Calculate total distinct values once, treating NaN as a category.
+        print(ix)
+        print(col)
         try:
             s = pd.Series(col)
             # counts NaN/None as a category
