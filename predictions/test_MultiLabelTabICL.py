@@ -23,7 +23,7 @@ from MultiLabelTabPFN.src.tabpfn import TabPFNClassifier
 def main():
     # files = [r"../data/Other_datasets/scene.csv"]
     # models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
-    files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt",
+    files = [r"../data/INI_DataSet.txt", r"../data/PI_DataSet.txt", r"../data/NRTI_DataSet.txt",
              r"../data/NNRTI_DataSet.txt"]
 
     # files = [r"../data/NRTI_DataSet.txt",
