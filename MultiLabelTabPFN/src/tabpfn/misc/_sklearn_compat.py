@@ -20,6 +20,7 @@ import sys
 import types
 from dataclasses import dataclass, field
 from typing import Callable, Literal
+import numpy as np
 
 import sklearn
 from sklearn.utils.fixes import parse_version
@@ -425,7 +426,7 @@ if sklearn_version < parse_version("1.6"):
             elif no_val_X and not no_val_y:
                 out = y
             else:
-                out = X, y
+                out = np.array(X), np.array(y)
             return out
         if "ensure_all_finite" in kwargs:
             force_all_finite = kwargs.pop("ensure_all_finite")
