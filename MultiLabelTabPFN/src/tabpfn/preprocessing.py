@@ -332,7 +332,7 @@ class EnsembleConfig:
         feature_shift_decoder: Literal["shuffle", "rotate"] | None,
         preprocessor_configs: Sequence[PreprocessorConfig],
         class_shift_method: Literal["rotate", "shuffle"] | None,
-        n_classes: int,
+        n_labels: int,
         random_state: int | np.random.Generator | None,
     ) -> list[ClassifierEnsembleConfig]:
         """Generate ensemble configurations for classification.
@@ -349,7 +349,7 @@ class EnsembleConfig:
             feature_shift_decoder: How shift features
             preprocessor_configs: Preprocessor configurations to use on the data.
             class_shift_method: How to shift classes for classpermutation.
-            n_classes: Number of classes.
+            n_labels: Number of classes.
             random_state: Random number generator.
 
         Returns:
@@ -361,14 +361,14 @@ class EnsembleConfig:
         featshifts = rng.choice(featshifts, size=n, replace=False)  # type: ignore
 
         if class_shift_method == "rotate":
-            arange = np.arange(0, n_classes)
-            shifts = rng.permutation(n_classes).tolist()
+            arange = np.arange(0, n_labels)
+            shifts = rng.permutation(n_labels).tolist()
             class_permutations = [np.roll(arange, s) for s in shifts]
             class_permutations = [  # type: ignore
-                class_permutations[c] for c in rng.choice(n_classes, n)
+                class_permutations[c] for c in rng.choice(n_labels, n)
             ]
         elif class_shift_method == "shuffle":
-            noise = rng.random((n * CLASS_SHUFFLE_OVERESTIMATE_FACTOR, n_classes))
+            noise = rng.random((n * CLASS_SHUFFLE_OVERESTIMATE_FACTOR, n_labels))
             shufflings = np.argsort(noise, axis=1)
             uniqs = np.unique(shufflings, axis=0)
             balance_count = n // len(uniqs)

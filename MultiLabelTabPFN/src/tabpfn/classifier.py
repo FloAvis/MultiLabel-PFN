@@ -126,7 +126,7 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
     """The number of labels found in the target data during `fit()`."""
 
     class_counts_: npt.NDArray[Any]
-    """The number of classes per class found in the target data during `fit()`."""
+    """The number of classes per label found in the target data during `fit()`."""
 
     n_outputs_: Literal[1]
     """The number of outputs the model has. Only 1 for now"""
@@ -525,12 +525,14 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
                 self.n_classes_ = int(torch.max(y).item()) + 1
             self.classes_ = torch.arange(self.n_classes_)
         '''
+        self.n_labels_ = y.shape[1]
+
         # TODO: Support more classes with a fallback strategy.
-        if self.n_classes_ > self.interface_config_.MAX_NUMBER_OF_CLASSES:
+        if self.n_labels_ > self.interface_config_.MAX_NUMBER_OF_CLASSES:
             raise ValueError(
-                f"Number of classes {self.n_classes_} exceeds the maximal number of "
-                "classes supported by TabPFN. Consider using a strategy to reduce "
-                "the number of classes. For code see "
+                f"Number of labels {self.n_labels_} exceeds the maximal number of "
+                "labels supported by TabPFN. Consider using a strategy to reduce "
+                "the number of labels. For code see "
                 "https://github.com/PriorLabs/tabpfn-extensions/blob/main/src/"
                 "tabpfn_extensions/many_class/many_class_classifier.py",
             )
@@ -580,7 +582,7 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
             class_shift_method=self.interface_config_.CLASS_SHIFT_METHOD
             if not self.differentiable_input
             else None,
-            n_classes=self.n_classes_,
+            n_labels=self.n_labels_,
             random_state=rng,
         )
         assert len(ensemble_configs) == self.n_estimators
@@ -950,11 +952,11 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
                 # So we slice to self.n_classes_ to ensure the output tensor matches
                 # the expected number of classes
                 if batch_config.class_permutation is None:
-                    output_batch.append(processed_output[:, i, : self.n_classes_])
+                    output_batch.append(processed_output[:, i, : self.n_labels_])
                 else:
                     # make sure the processed_output num_classes are the same.
-                    if len(batch_config.class_permutation) != self.n_classes_:
-                        use_perm = np.arange(self.n_classes_)
+                    if len(batch_config.class_permutation) != self.n_labels_:
+                        use_perm = np.arange(self.n_labels_)
                         use_perm[: len(batch_config.class_permutation)] = (
                             batch_config.class_permutation
                         )
