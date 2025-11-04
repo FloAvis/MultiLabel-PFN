@@ -162,6 +162,7 @@ class PerFeatureTransformer(Architecture):
             )
 
         if y_encoder is None:
+            print("y-encoder was None")
             y_encoder = SequentialEncoder(
                 NanHandlingEncoderStep(),
                 LinearInputEncoderStep(
@@ -472,8 +473,8 @@ class PerFeatureTransformer(Architecture):
         # making sure no label leakage ever happens
         y["main"][single_eval_pos:] = torch.nan
 
-        print(y)
-        print(y.keys())
+        print(y["main"])
+        print(y["main"].shape)
         print(self.y_encoder)
 
         embedded_y = self.y_encoder(
