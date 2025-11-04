@@ -207,6 +207,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         random_state: int | None = 42,
         n_jobs: Optional[int] = None,
         verbose: bool = False,
+        label_encoding_used:bool = False,
         inference_config: Optional[InferenceConfig | Dict] = None,
     ):
         self.n_estimators = n_estimators
@@ -226,6 +227,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         self.n_jobs = n_jobs
         self.random_state = random_state
         self.verbose = verbose
+        self.label_encoding_used = label_encoding_used
         self.inference_config = inference_config
 
     def _more_tags(self):
@@ -307,7 +309,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
             model_path_ = Path(self.model_path) if isinstance(self.model_path, str) else self.model_path
             if model_path_.exists():
                 # Scenario 2a: the model path exists, load it directly
-                checkpoint = torch.load(model_path_, map_location="cpu", weights_only=False)
+                checkpoint = torch.load(model_path_, map_location="cpu", weights_only=True)
             else:
                 # Scenario 2b: the model path does not exist, download the checkpoint version to this path
                 if self.allow_auto_download:
@@ -333,7 +335,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
         #print(checkpoint["config"])
 
         self.model_path_ = model_path_
-        self.model_ = TabICL(**checkpoint["config"])
+        self.model_ = TabICL(label_learning = self.label_encoding_used, **checkpoint["config"])
         self.model_.load_state_dict(checkpoint["state_dict"])
         self.model_.eval()
 
