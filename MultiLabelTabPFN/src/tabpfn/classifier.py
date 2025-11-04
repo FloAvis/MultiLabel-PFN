@@ -126,7 +126,7 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
     """The number of labels found in the target data during `fit()`."""
 
     class_counts_: npt.NDArray[Any]
-    """The number of classes per class found in the target data during `fit()`."""
+    """The number of classes per label found in the target data during `fit()`."""
 
     n_outputs_: Literal[1]
     """The number of outputs the model has. Only 1 for now"""
@@ -506,7 +506,7 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
         if feature_names_in is not None:
             self.feature_names_in_ = feature_names_in
         self.n_features_in_ = n_features_in
-
+        '''
         # Ensure that the y values are ordinally encoded
         # TODO(eddiebergman): Ensure the counts here line up with
         #   the actual classes after label encoder.
@@ -524,13 +524,13 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
             if not hasattr(self, "n_classes_"):
                 self.n_classes_ = int(torch.max(y).item()) + 1
             self.classes_ = torch.arange(self.n_classes_)
-
+        '''
         # TODO: Support more classes with a fallback strategy.
-        if self.n_classes_ > self.interface_config_.MAX_NUMBER_OF_CLASSES:
+        if self.n_labels_ > self.interface_config_.MAX_NUMBER_OF_LABELS:
             raise ValueError(
-                f"Number of classes {self.n_classes_} exceeds the maximal number of "
-                "classes supported by TabPFN. Consider using a strategy to reduce "
-                "the number of classes. For code see "
+                f"Number of labels {self.n_labels_} exceeds the maximal number of "
+                "labels supported by TabPFN. Consider using a strategy to reduce "
+                "the number of labels. For code see "
                 "https://github.com/PriorLabs/tabpfn-extensions/blob/main/src/"
                 "tabpfn_extensions/many_class/many_class_classifier.py",
             )
