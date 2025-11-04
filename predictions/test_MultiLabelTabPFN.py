@@ -95,7 +95,7 @@ def main():
             #multi_target_pfn = TabICLClassifier(model_path="../my/" + model, allow_auto_download=False, average_logits=True,
             #                                    n_jobs=2, verbose=True, use_hierarchical=False)
 
-            multi_target_pfn = TabPFNClassifier(model_path="../my/" + model, n_preprocessing_jobs=2, random_state=42, average_before_softmax=True)
+            multi_target_pfn = TabPFNClassifier(model_path="../my/" + model, n_preprocessing_jobs=1, random_state=42, average_before_softmax=True)
 
 
             if use_kfold == False:

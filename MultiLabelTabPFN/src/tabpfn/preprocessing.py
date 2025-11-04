@@ -644,7 +644,9 @@ def fit_preprocessing_one(
     # to distuinguish what to do with the `ys` based on the ensemble config type
 
     # TODO: (Klemens)
-    y_train_processed = transform_labels_one(config, y_train)
+    #y_train_processed = transform_labels_one(config, y_train)
+
+    y_train_processed = y_train
 
     return (config, preprocessor, res.X, y_train_processed, res.categorical_features)
 
@@ -672,6 +674,7 @@ def transform_labels_one(
     elif isinstance(config, ClassifierEnsembleConfig):
         if config.class_permutation is not None:
             print(y_train.shape)
+            print(config.class_permutation)
             y_train = config.class_permutation[y_train]
     else:
         raise ValueError(f"Invalid ensemble config type: {type(config)}")
