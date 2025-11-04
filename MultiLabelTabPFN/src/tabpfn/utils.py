@@ -451,6 +451,7 @@ def validate_Xy_fit(
             ensure_min_features=1,
             y_numeric=ensure_y_numeric,
             estimator=estimator,
+            skip_check_array=True,
         )
     else:  # Quick check for tensor input for diffable classifier
         assert isinstance(X, torch.Tensor)
