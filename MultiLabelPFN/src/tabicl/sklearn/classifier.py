@@ -307,7 +307,7 @@ class TabICLClassifier(ClassifierMixin, BaseEstimator):
             model_path_ = Path(self.model_path) if isinstance(self.model_path, str) else self.model_path
             if model_path_.exists():
                 # Scenario 2a: the model path exists, load it directly
-                checkpoint = torch.load(model_path_, map_location="cpu", weights_only=True)
+                checkpoint = torch.load(model_path_, map_location="cpu", weights_only=False)
             else:
                 # Scenario 2b: the model path does not exist, download the checkpoint version to this path
                 if self.allow_auto_download:
