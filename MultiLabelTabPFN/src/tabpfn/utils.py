@@ -369,6 +369,9 @@ def fix_dtypes(  # noqa: D103
         if use_iloc:
             X.iloc[:, cat_indices] = X.iloc[:, cat_indices].astype("category")
         else:
+            print(X)
+            print(X.shape)
+            print(cat_indices)
             X[cat_indices] = X[cat_indices].astype("category")
 
     # Alright, pandas can have a few things go wrong.
