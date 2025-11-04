@@ -86,7 +86,7 @@ def main():
             # multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
 
             multi_target_pfn = TabICLClassifier(model_path="../my/" + model, allow_auto_download=False, average_logits=True,
-                                                n_jobs=2, verbose=True, use_hierarchical=False, label_encoding_used=True)
+                                                n_jobs=2, verbose=True, use_hierarchical=False)
 
 
 
