@@ -427,6 +427,7 @@ if sklearn_version < parse_version("1.6"):
                 out = np.array(y)
             else:
                 out = np.array(X), np.array(y)
+                print(type(out[0]))
             return out
         if "ensure_all_finite" in kwargs:
             force_all_finite = kwargs.pop("ensure_all_finite")

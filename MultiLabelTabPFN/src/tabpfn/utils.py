@@ -555,7 +555,7 @@ def infer_categorical_features(
     indices = []
 
     print(type(X))
-
+    X = np.array(X)
     for ix, col in enumerate(X.T):
         # Calculate total distinct values once, treating NaN as a category.
         try:
