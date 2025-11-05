@@ -305,7 +305,7 @@ class TabICL(nn.Module):
                 self.col_embedder_lab(
                     y_train,
                     train_size=None if embed_with_test else train_size,
-                    feature_shuffles=False,
+                    feature_shuffles=None,
                     mgr_config=inference_config.COL_LAB_CONFIG,
                 ),
                 mgr_config=inference_config.ROW_LAB_CONFIG,
