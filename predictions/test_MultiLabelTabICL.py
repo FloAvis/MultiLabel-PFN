@@ -54,8 +54,10 @@ def main():
     ]
     '''
 
-    models = ["label_enc_step-1000.ckpt",
-        "label_enc_step-2300.ckpt"]
+    models = ["cat_feat_step-1000.ckpt",
+        "cat_feat_step-3350.ckpt",
+              "label_enc_step-4300.ckpt",
+              "zlpr_loss_step-700.ckpt"]
 
 
     feature_prefix = "F"
