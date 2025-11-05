@@ -306,9 +306,9 @@ class TabICL(nn.Module):
                     y_train,
                     train_size=None if embed_with_test else train_size,
                     feature_shuffles=feature_shuffles,
-                    mgr_config=inference_config.COL_CONFIG,
+                    mgr_config=inference_config.COL_LAB_CONFIG,
                 ),
-                mgr_config=inference_config.ROW_CONFIG,
+                mgr_config=inference_config.ROW_LAB_CONFIG,
             )
 
             # Dataset-wise in-context learning
