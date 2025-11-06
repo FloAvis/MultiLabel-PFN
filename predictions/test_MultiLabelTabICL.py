@@ -52,18 +52,20 @@ def main():
         "tabpfn_full_step-1600.ckpt",
         "zlpr_loss_step-300.ckpt"
     ]
-    '''
+    
 
     models = ["cat_feat_step-1000.ckpt",
         "cat_feat_step-3350.ckpt",
               "label_enc_step-4300.ckpt",
               "zlpr_loss_step-700.ckpt"]
 
+    '''
 
+    models = ["zlpr_loss_step-3050.ckpt"]
     feature_prefix = "F"
     label_prefix = "T"
 
-    version = "_new_loss_sigmoid"
+    version = "_pred_one_label"
 
     use_kfold = True
     folds = 5
@@ -71,6 +73,8 @@ def main():
     for file in files:
 
         X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
+
+        #Y = Y[:,0]
 
         '''
         df = pd.read_csv(file, true_values=["b'1'"], false_values=["b'0'"], dtype=float)

@@ -148,6 +148,8 @@ def cv_predict(model, X, Y, cv, mode="single", method="predict"):
             else:
                 y_pred_tmp = model.predict_proba(X_arr[test_idx])
 
+            y_pred_tmp = np.array(y_pred_tmp)
+
             if method == "predict_proba" and len(y_pred_tmp.shape) == 2:
                 y_pred_tmp_tmp = np.zeros((y_pred_tmp.shape[0], y_pred_tmp.shape[1], 2))
                 y_pred_tmp_tmp[:,:,1] = y_pred_tmp
