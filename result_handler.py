@@ -267,7 +267,8 @@ def prc_auc_score(y_true, y_score, multiclass="raise"):
     :param multiclass: which mode of multiclass to use
     :return: prc score
     """
-    if y_score.shape[1] == 2:
+
+    if y_score.shape[-1] == 2:
         tab_prec, tab_rec, thresholds = precision_recall_curve(y_true, y_score[:, 1])
         score_prc = auc(tab_rec, tab_prec)
 

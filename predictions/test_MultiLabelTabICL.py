@@ -61,11 +61,12 @@ def main():
 
     '''
 
-    models = ["zlpr_loss_step-3050.ckpt"]
+    models = ["comb_step-1000.ckpt",
+              "comb_step-10000.ckpt"]
     feature_prefix = "F"
     label_prefix = "T"
 
-    version = "_pred_one_label"
+    version = "_new_loss_sigmoid"
 
     use_kfold = True
     folds = 5
