@@ -174,6 +174,8 @@ class PerFeatureTransformer(Architecture):
                     in_keys=("main", "nan_indicators"),
                 ),
             )
+
+
         self.encoder = encoder
         self.y_encoder = y_encoder
         self.ninp = config.emsize
@@ -346,6 +348,8 @@ class PerFeatureTransformer(Architecture):
         """
         assert style is None
 
+        print("Y entry: ", y.shape)
+
         if isinstance(x, dict):
             assert "main" in set(x.keys()), f"Main must be in input keys: {x.keys()}."
         else:
@@ -440,6 +444,10 @@ class PerFeatureTransformer(Architecture):
                 y[k] = y[k].unsqueeze(-1)
             if y[k].ndim == 2:
                 y[k] = y[k].unsqueeze(-1)  # s b -> s b 1
+
+            print("y after unsqueeze: ", y[k].shape)
+
+            #if y[k][]
 
             y[k] = y[k].transpose(0, 1)  # s b 1 -> b s 1
 

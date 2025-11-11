@@ -509,6 +509,8 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
         if feature_names_in is not None:
             self.feature_names_in_ = feature_names_in
         self.n_features_in_ = n_features_in
+
+
         '''
         # Ensure that the y values are ordinally encoded
         # TODO(eddiebergman): Ensure the counts here line up with
@@ -528,6 +530,8 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
                 self.n_classes_ = int(torch.max(y).item()) + 1
             self.classes_ = torch.arange(self.n_classes_)
         '''
+
+
         self.n_labels_ = y.shape[1]
 
         # TODO: Support more classes with a fallback strategy.
