@@ -514,6 +514,8 @@ class LinearInputEncoderStep(SeqEncStep):
         Returns:
             A tuple containing the transformed tensor.
         """
+
+
         x = torch.cat(x, dim=-1)
         if self.replace_nan_by_zero:
             x = torch.nan_to_num(x, nan=0.0)  # type: ignore
@@ -521,6 +523,9 @@ class LinearInputEncoderStep(SeqEncStep):
         # Ensure input tensor dtype matches the layer's weight dtype
         # Since this layer gets input from the outside we verify the dtype
         x = x.to(self.layer.weight.dtype)
+
+        print("In trasnform: ", x)
+        print("In trasnform: ", x.shape)
 
         return (self.layer(x),)
 
