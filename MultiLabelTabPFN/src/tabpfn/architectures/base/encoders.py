@@ -516,7 +516,8 @@ class LinearInputEncoderStep(SeqEncStep):
         """
 
         print("x before cat: ", x)
-        print("x before cat: ", x.shape)
+        for t in x:
+            print("x before cat: ", x.shape)
 
         x = torch.cat(x, dim=-1)
         if self.replace_nan_by_zero:
