@@ -673,8 +673,8 @@ def transform_labels_one(
             ).ravel()
     elif isinstance(config, ClassifierEnsembleConfig):
         if config.class_permutation is not None:
-            print(y_train.shape)
-            print(config.class_permutation)
+            #print(y_train.shape)
+            #print(config.class_permutation)
             y_train = config.class_permutation[y_train]
     else:
         raise ValueError(f"Invalid ensemble config type: {type(config)}")

@@ -499,9 +499,6 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
             ignore_pretraining_limits=self.ignore_pretraining_limits,
         )
 
-        print("After validate: ", X.shape)
-        print(type(X))
-
         check_cpu_warning(
             self.devices_, X, allow_cpu_override=self.ignore_pretraining_limits
         )
@@ -557,7 +554,7 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
             )
             preprocess_transforms = self.interface_config_.PREPROCESS_TRANSFORMS
 
-            print("After infering cats: ", X.shape)
+
 
             # Will convert inferred categorical indices to category dtype,
             # to be picked up by the ord_encoder, as well
@@ -679,15 +676,12 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
         if not hasattr(self, "model_") or not self.differentiable_input:
             byte_size, rng = self._initialize_model_variables()
 
-            print("Before preprocessing: ", X.shape)
             ensemble_configs, X, y = self._initialize_dataset_preprocessing(X, y, rng)
         else:  # already fitted and prompt_tuning mode: no cat. features
             _, rng = infer_random_state(self.random_state)
             _, _, byte_size = determine_precision(
                 self.inference_precision, self.devices_
             )
-
-        print("In fit: ", X.shape)
 
         # Create the inference engine
         self.executor_ = create_inference_engine(

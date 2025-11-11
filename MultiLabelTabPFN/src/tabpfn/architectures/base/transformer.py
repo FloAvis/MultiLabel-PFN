@@ -481,8 +481,8 @@ class PerFeatureTransformer(Architecture):
         # making sure no label leakage ever happens
         y["main"][single_eval_pos:] = torch.nan
 
-        print(y["main"])
-        print(y["main"].shape)
+        #print(y["main"])
+        print("y before encoder: ", y["main"].shape)
         print(self.y_encoder)
 
         embedded_y = self.y_encoder(
