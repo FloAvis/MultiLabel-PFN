@@ -9,6 +9,8 @@ from functools import partial
 from typing import TYPE_CHECKING, Any, Literal, overload
 from typing_extensions import Self, override
 
+import torch.nn.functional as f
+
 import einops
 import networkx as nx
 import numpy as np
@@ -175,6 +177,7 @@ class PerFeatureTransformer(Architecture):
                 ),
             )
 
+        self.max_labels = 10 # hardcoded to test
 
         self.encoder = encoder
         self.y_encoder = y_encoder
@@ -350,6 +353,8 @@ class PerFeatureTransformer(Architecture):
 
         print("Y entry: ", y.shape)
 
+        y = f.pad(y, (0, self.max_labels - y.shape[-1] )).unsqueeze(1)
+
         if isinstance(x, dict):
             assert "main" in set(x.keys()), f"Main must be in input keys: {x.keys()}."
         else:
@@ -478,8 +483,12 @@ class PerFeatureTransformer(Architecture):
 
             y[k] = y[k].transpose(0, 1)  # b s 1 -> s b 1
 
+        y["main"][single_eval_pos:] = torch.zero
+
         # making sure no label leakage ever happens
         y["main"][single_eval_pos:] = torch.nan
+
+
 
         #print(y["main"])
         print("y before encoder: ", y["main"].shape)
