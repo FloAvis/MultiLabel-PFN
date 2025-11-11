@@ -483,7 +483,7 @@ class PerFeatureTransformer(Architecture):
 
             y[k] = y[k].transpose(0, 1)  # b s 1 -> s b 1
 
-        y["main"][single_eval_pos:] = torch.zero
+
 
         # making sure no label leakage ever happens
         y["main"][single_eval_pos:] = torch.nan
