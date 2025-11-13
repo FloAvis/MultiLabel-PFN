@@ -353,7 +353,8 @@ class PerFeatureTransformer(Architecture):
 
         print("Y entry: ", y.shape)
 
-        y = f.pad(y, (0, self.max_labels - y.shape[-1] )).unsqueeze(1)
+        if y.shape == 2:
+            y = f.pad(y, (0, self.max_labels - y.shape[-1] )).unsqueeze(1)
 
         if isinstance(x, dict):
             assert "main" in set(x.keys()), f"Main must be in input keys: {x.keys()}."
