@@ -351,8 +351,7 @@ class PerFeatureTransformer(Architecture):
         """
         assert style is None
 
-        print("Y entry: ", y.shape)
-
+        #for multilabel prediction the targets need to right shape
         if y.shape == 2:
             y = f.pad(y, (0, self.max_labels - y.shape[-1] )).unsqueeze(1)
 
@@ -451,10 +450,6 @@ class PerFeatureTransformer(Architecture):
             if y[k].ndim == 2:
                 y[k] = y[k].unsqueeze(-1)  # s b -> s b 1
 
-            print("y after unsqueeze: ", y[k].shape)
-
-            #if y[k][]
-
             y[k] = y[k].transpose(0, 1)  # s b 1 -> b s 1
 
             if y[k].shape[1] < x["main"].shape[1]:
@@ -489,11 +484,6 @@ class PerFeatureTransformer(Architecture):
         # making sure no label leakage ever happens
         y["main"][single_eval_pos:] = torch.nan
 
-
-
-        #print(y["main"])
-        print("y before encoder: ", y["main"].shape)
-        print(self.y_encoder)
 
         embedded_y = self.y_encoder(
             y,
