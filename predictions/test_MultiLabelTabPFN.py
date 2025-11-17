@@ -55,8 +55,7 @@ def main():
     ]
     '''
 
-    models = ["tabpfn_full_step-1000.ckpt",
-        "tabpfn_full_step-1600.ckpt"]
+    models = ["tabpfn_full_step-3000.ckpt"]
 
     #models = ["label_enc_step-1000.ckpt",
     #    "label_enc_step-2300.ckpt"]
