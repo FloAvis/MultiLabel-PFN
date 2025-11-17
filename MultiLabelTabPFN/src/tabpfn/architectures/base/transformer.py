@@ -352,9 +352,9 @@ class PerFeatureTransformer(Architecture):
         assert style is None
 
         print(y.shape)
-
+        print(y.shape)
         #for multilabel prediction the targets need to right shape
-        if y.shape == 2:
+        if len(y.shape) == 2:
             y = f.pad(y, (0, self.max_labels - y.shape[-1] )).unsqueeze(1)
 
         print(y.shape)
