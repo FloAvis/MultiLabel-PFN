@@ -257,6 +257,48 @@ def save_ensemble_proba(y_pred_probas_ensemble, y_true, label, k_folds=None, pat
 Scores concerning Multilabel prediction:
 """
 
+"""
+Scores concerning Multilabel prediction:
+"""
+
+def calc_metrics(paths, models, metric, metric_args, ending="", drop_na=True):
+    """
+    Calculating AUC PRC for binary and multiclass setting. OVR multiclass setting
+    was adapted from https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html
+
+    :param y_true: True labels
+    :param y_score: Predicted labels
+    :param multiclass: which mode of multiclass to use
+    :return: prc score
+    """
+    means = {}
+    stds = {}
+
+    for path in paths:
+
+        acc_list_mean = []
+        acc_list_std = []
+
+
+        for model in models:
+            results = pd.read_csv(path + model + ending)
+
+            if drop_na:
+                results.dropna(subset=results.columns[results.columns.str.startswith('True_')].tolist(), inplace=True)
+
+            subs_accs_groups = results.groupby(by="kFolds").apply(
+                lambda x: metric(x.filter(regex="True_*"), x.filter(regex="Pred_*"), **metric_args),
+                include_groups=False)
+
+            acc_list_mean.append(subs_accs_groups.mean())
+            acc_list_std.append(subs_accs_groups.std())
+
+        means.update({path.split("/")[-1].strip("_"): acc_list_mean})
+        stds.update({path.split("/")[-1].strip("_"): acc_list_std})
+
+    return means, stds
+
+
 def prc_auc_score(y_true, y_score, multiclass="raise"):
     """
     Calculating AUC PRC for binary and multiclass setting. OVR multiclass setting
@@ -267,6 +309,9 @@ def prc_auc_score(y_true, y_score, multiclass="raise"):
     :param multiclass: which mode of multiclass to use
     :return: prc score
     """
+
+    y_true = np.array(y_true)
+    y_score = np.array(y_score)
 
     if y_score.shape[-1] == 2:
         tab_prec, tab_rec, thresholds = precision_recall_curve(y_true, y_score[:, 1])
@@ -310,7 +355,7 @@ def prc_auc_score(y_true, y_score, multiclass="raise"):
     return score_prc
 
 
-def subset_acc(y_pred, y_true, nan_mode="warning"):
+def subset_acc(y_true, y_pred, nan_mode="warning"):
     """
     Calculates the subset accuracy for multilabel prediction
 
@@ -348,7 +393,7 @@ def subset_acc(y_pred, y_true, nan_mode="warning"):
 
     return acc
 
-def exam_acc(y_pred, y_true, nan_mode="warning"):
+def exam_acc(y_true, y_pred, nan_mode="warning"):
     """
     Calculates the subset accuracy for multilabel prediction
 
@@ -384,3 +429,4 @@ def exam_acc(y_pred, y_true, nan_mode="warning"):
     acc = acc/y_pred.shape[0]
 
     return acc
+

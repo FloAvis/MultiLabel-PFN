@@ -27,9 +27,9 @@ from tqdm import tqdm
 import wandb
 
 from MultiLabelTabPFN.src.tabpfn import TabPFNClassifier
-from tabicl.prior.dataset import PriorDataset
-from tabicl.prior.genload import LoadPriorDataset
-from tabicl.train.optim import get_scheduler
+from MultiLabelPFN.src.tabicl.prior.dataset import PriorDataset
+from MultiLabelPFN.src.tabicl.prior.genload import LoadPriorDataset
+from MultiLabelPFN.src.tabicl.train.optim import get_scheduler
 from MultiLabelTabPFN.src.tabpfn.train.train_config import build_parser
 
 from MultiLabelTabPFN.src.tabpfn.architectures import ARCHITECTURES, base
