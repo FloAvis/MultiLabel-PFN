@@ -30,32 +30,11 @@ def main():
     #files = [r"../data/NRTI_DataSet.txt",
     #         r"../data/NNRTI_DataSet.txt"]
 
-    '''
-    models = [
-        "finetune_step-1250.ckpt",
-        "finetune_stage3_step-50.ckpt",
-        "bal_prior_step-1000.ckpt",
-        "finetune_step-2000.ckpt",
-        "bal_prior_step-1350.ckpt",
-        "finetune_step-3150.ckpt",
-        "full_model_step-1000.ckpt",
-        "tabicl-classifier-v1.1-0506.ckpt",
-        "random_test/step-1.ckpt"]
-    
 
-    models = [
-        "finetune_step-3300.ckpt",
-        "bal_prior_step-1700.ckpt",
-        "full_model_step-2900.ckpt",
-        "label_enc_step-1000.ckpt",
-        "label_enc_step-2300.ckpt",
-        "tabpfn_full_step-1000.ckpt",
-        "tabpfn_full_step-1600.ckpt",
-        "zlpr_loss_step-300.ckpt"
-    ]
-    '''
 
-    models = ["tabpfn_full_step-3000.ckpt"]
+    models = ["tabpfn_full_step-4000.ckpt",
+        "tabpfn_full_step-5000.ckpt",
+              "tabpfn_full_step-5300.ckpt"]
 
     #models = ["label_enc_step-1000.ckpt",
     #    "label_enc_step-2300.ckpt"]
