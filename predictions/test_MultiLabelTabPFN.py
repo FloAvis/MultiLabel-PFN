@@ -22,28 +22,30 @@ from MultiLabelTabPFN.src.tabpfn import TabPFNClassifier
 def main():
 
 
-    #files = [r"../data/Other_datasets/scene.csv"]
+    files = [r"../data/Other_datasets/scene.csv", r"../data/Other_datasets/yeast.csv"]
     #models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
-    files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt",
-             r"../data/NNRTI_DataSet.txt"]
+    #files = [r"../data/PI_DataSet.txt", r"../data/INI_DataSet.txt", r"../data/NRTI_DataSet.txt",
+    #         r"../data/NNRTI_DataSet.txt"]
 
     #files = [r"../data/NRTI_DataSet.txt",
     #         r"../data/NNRTI_DataSet.txt"]
 
 
 
-    models = ["tabpfn_full_step-4000.ckpt",
-        "tabpfn_full_step-5000.ckpt",
-              "tabpfn_full_step-5300.ckpt"]
+    #models = ["tabpfn_full_step-4000.ckpt",
+    #    "tabpfn_full_step-5000.ckpt",
+    #          "tabpfn_full_step-5300.ckpt"]
 
     #models = ["label_enc_step-1000.ckpt",
     #    "label_enc_step-2300.ckpt"]
-    #models = ["tabpfn_full_step-1000.ckpt", "tabpfn_full_step-1600.ckpt",]
+    models = ["tabpfn_full_step-1000.ckpt", "tabpfn_full_step-1600.ckpt","tabpfn_full_step-3000.ckpt", "tabpfn_full_step-4000.ckpt",
+        "tabpfn_full_step-5000.ckpt",
+              "tabpfn_full_step-5300.ckpt"]
 
     feature_prefix = "F"
     label_prefix = "T"
 
-    version = "_new_loss_sigmoid"
+
 
     use_kfold = True
     folds = 5
@@ -52,10 +54,11 @@ def main():
 
     for file in files:
 
+        version = "_" + file.split("/")[-1].strip(".csv") + "_dataset"
 
-        X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
+        #X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
 
-        '''
+
         df = pd.read_csv(file, true_values=["b'1'"], false_values=["b'0'"], dtype=float)
 
         X = df.filter(regex=feature_prefix)
@@ -65,7 +68,7 @@ def main():
         #print(Y)
 
         drugs= list(Y.columns.values)
-        '''
+
 
         for model in models:
             #multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)

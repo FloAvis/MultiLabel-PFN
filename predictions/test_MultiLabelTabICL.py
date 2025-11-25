@@ -24,7 +24,7 @@ def main():
     # files = [r"../data/Other_datasets/scene.csv"]
     # models = ["finetune_step-3150.ckpt", r"full_model_step-1000.ckpt", "bal_prior_step-1000.ckpt", "bal_prior_step-1350.ckpt"]
     files = [r"../data/INI_DataSet.txt", r"../data/PI_DataSet.txt", r"../data/NRTI_DataSet.txt",
-             r"../data/NNRTI_DataSet.txt"]
+             r"../data/NNRTI_DataSet.txt", r"../data/Other_datasets/scene.csv", r"../data/Other_datasets/yeast.csv"]
 
     # files = [r"../data/NRTI_DataSet.txt",
     #         r"../data/NNRTI_DataSet.txt"]
@@ -59,35 +59,43 @@ def main():
               "label_enc_step-4300.ckpt",
               "zlpr_loss_step-700.ckpt"]
 
-    '''
+    
 
     models = ["comb_step-1000.ckpt",
               "comb_step-10000.ckpt"]
+    '''
+
+    models = ["comb_50_lab_step-1000.ckpt", "comb_50_lab_step-2000.ckpt", "comb_50_lab_step-3000.ckpt", "comb_50_lab_step-7000.ckpt"]
+
     feature_prefix = "F"
     label_prefix = "T"
 
-    version = "_new_loss_sigmoid"
+    #version = "_new_loss_sigmoid"
 
     use_kfold = True
     folds = 5
 
     for file in files:
 
-        X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
+        if file.split("/")[2] == "Other_datasets":
+            version = "_" + file.split("/")[-1].strip(".csv") + "_dataset"
 
         #Y = Y[:,0]
 
-        '''
-        df = pd.read_csv(file, true_values=["b'1'"], false_values=["b'0'"], dtype=float)
 
-        X = df.filter(regex=feature_prefix)
-        Y = df.filter(regex=label_prefix)
+            df = pd.read_csv(file, true_values=["b'1'"], false_values=["b'0'"], dtype=float)
 
-        #print(X)
-        #print(Y)
+            X = df.filter(regex=feature_prefix)
+            Y = df.filter(regex=label_prefix)
 
-        drugs= list(Y.columns.values)
-        '''
+            #print(X)
+            #print(Y)
+
+            drugs= list(Y.columns.values)
+        else:
+            version = "_new_loss_sigmoid"
+
+            X, Y, drugs = data_preprocessing.hq_hiv_loader(file, drop_na=True)
 
         for model in models:
             # multi_target_pfn = TabICLClassifier(model_path="../my/random_test/step-1.ckpt", allow_auto_download=False, n_jobs=2, verbose=True, use_hierarchical=False)
