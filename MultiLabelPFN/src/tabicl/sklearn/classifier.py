@@ -25,11 +25,14 @@ try:
 except:
     print("Not able to import from MultiLanelPFN, bad path")
 
+
+"""
 try:
     from tabicl import InferenceConfig
     from tabicl import TabICL
 except:
     print("Not able to import, bad path")
+"""
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn")
 OLD_SKLEARN = version.parse(sklearn.__version__) < version.parse("1.6")
