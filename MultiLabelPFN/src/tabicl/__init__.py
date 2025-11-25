@@ -1,4 +1,4 @@
-from .model.inference_config import InferenceConfig
-from .model.tabicl import TabICL
+from MultiLabelPFN.src.tabicl.model.inference_config import InferenceConfig
+from MultiLabelPFN.src.tabicl.model.tabicl import TabICL
 
-from .sklearn.classifier import TabICLClassifier
+from MultiLabelPFN.src.tabicl.sklearn.classifier import TabICLClassifier
