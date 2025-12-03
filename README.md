@@ -1,21 +1,22 @@
-# <ins>Multilabel prediction using tabular prior-data fitted networks applied to HIV drug resistance prediction</ins>
+# Multi-Label PFN models restructured and retrained to handle small tabular multilabel data
 
-## Github Repository accompanying the Master Thesis in Bioinformatics of _Florian Benedikt Vögele_
+
+## Github Repository accompanying the Master Thesis in Bioinformatics <ins> Multilabel prediction using tabular prior-data fitted networks applied to HIV drug resistance prediction </ins> of _Florian Benedikt Vögele_
 
 ## Description
 
 The ongoing AIDS epidemic, caused by HIV, is still affecting millions of people worldwide. In recent decades, many advancements in antiviral drug development, especially research concerning HIV, have been made, resulting in a decreased disease burden in infected patients and a lower transmission rate. However, HIV drug resistance is on the rise, hindering treatment and increasing the risk of transmission. A correct treatment of HIV with effective drugs is vital for the management of the disease. Using the new machine learning model class prior-data fitted networks, this thesis aimed to predict HIV drug resistance based on mutations in the target proteins of the drugs. For this purpose, a multi-label prediction approach was used to leverage multiple drugs targeting the same proteins and overlapping mutation predictors across different drugs. \\
 in this thesis, it has been shown that HIV drug resistance is predictable by simple multi-label classification methods and that additional information about other drug resistances can improve the predictive power. Additionally, modifying prior-data fitted networks for the inherent prediction of multi-label data is possible to a degree, but needs further research to confirm its full potential.
 
-The repository contains the code used for the dataset preprocessing, preliminary analyses and PT prediction approaches.
+This repositroy contains the code for the retraining of TabPFN and TabICL for model adaption.
 
-The repositroy containing the code for the retraining of TabPFN and TabICL for model adaption can be found [here](https://github.com/FloAvis/MultiLabel-PFN/).
+The repository containing the code used for the dataset preprocessing, preliminary analyses and problem transformation prediction approaches can be found [here](https://github.com/FloAvis/Masterthesis_TabPFN_HIV).
 
 ## Getting Started
 
 ### Dependencies
 
-Dependencies are described in the requirenments.txt file and a more conclusive list of packages used during the Thesis can be found under thesis_package_list.txt
+Dependencies are described in the requirenments.txt file.
 
 ### Repository structure
 
@@ -24,6 +25,11 @@ Dependencies are described in the requirenments.txt file and a more conclusive l
   * The HIVDRD are saved as their high quality filtered and the complete datasets with the suffix of .Full
   * The benchmarking datasets are saved under data/Other_dataset as .arff and processed .csv files
 
+* MultiLabelPFN
+  * Sourcecode for the modified TabICL architecture
+
+* MultiLabelTabPFN
+  * Sourcecode for the modified TabPFN architecture
 
 * Predictions
   * scripts for multi-label predictions can be found under predictions/
@@ -46,10 +52,10 @@ Dependencies are described in the requirenments.txt file and a more conclusive l
 
 The applications of the functions are described at the functions itself. If more questions arise you can contact me under florian.voegele@hotmail.de.
 
-## Author
+## Authors
 
 Florian Benedikt Vögele  
-
+[Amir Rezaei-Balef](https://github.com/amirbalef) 
 
 ## Version History
 
