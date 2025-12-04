@@ -14,6 +14,10 @@ class TabICL(nn.Module):
 
     modified from Qu, Jingang, et al. "Tabicl: A tabular foundation model for in-context learning on large data." arXiv preprint arXiv:2502.05564 (2025).
 
+    Modifications include:
+        - Converting "OneHotAndLinear" Layer to "LabelEncoding" for linear label encoding
+        - modifying the architecture in "learning.py" to accept multi-label datasets and label encoding approach
+
 
     TabICL is a transformer-based architecture for in-context learning on tabular data to make
     predictions without fine-tuning. It processes tabular data through three sequential stages:

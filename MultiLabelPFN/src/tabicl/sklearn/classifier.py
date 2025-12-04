@@ -19,20 +19,10 @@ from huggingface_hub.utils import LocalEntryNotFoundError
 
 from .preprocessing import TransformToNumerical, EnsembleGenerator
 
-try:
-    from MultiLabelPFN.src.tabicl import InferenceConfig
-    from MultiLabelPFN.src.tabicl import TabICL
-except:
-    print("Not able to import from MultiLanelPFN, bad path")
 
+from MultiLabelPFN.src.tabicl import InferenceConfig
+from MultiLabelPFN.src.tabicl import TabICL
 
-"""
-try:
-    from tabicl import InferenceConfig
-    from tabicl import TabICL
-except:
-    print("Not able to import, bad path")
-"""
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn")
 OLD_SKLEARN = version.parse(sklearn.__version__) < version.parse("1.6")
@@ -40,6 +30,9 @@ OLD_SKLEARN = version.parse(sklearn.__version__) < version.parse("1.6")
 
 class TabICLClassifier(ClassifierMixin, BaseEstimator):
     """Tabular In-Context Learning (TabICL) with scikit-learn interface.
+
+    modified label generation with the sigmoid activation
+
 
     This classifier applies TabICL to tabular data classification, using an ensemble
     of transformed dataset views to improve prediction accuracy. The ensemble members

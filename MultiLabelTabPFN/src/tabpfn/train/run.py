@@ -1,3 +1,11 @@
+"""
+
+Training script for MuLa TabPFN, modified from the training script of MuLa TabICL with parts from the training script of TabPFNWide:
+ Kolberg, Christopher, Katharina Eggensperger, and Nico Pfeifer. "TabPFN-Wide: Continued Pre-Training for Extreme Feature Counts." arXiv preprint arXiv:2510.06162 (2025).
+
+"""
+
+
 from __future__ import annotations
 
 import sys, os

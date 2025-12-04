@@ -1,5 +1,12 @@
 """The base architecture.
 
+The architecture was modified from TabPFN by PriorLabs: Hollmann, Noah, et al. "Accurate predictions on small data with a tabular foundation model." Nature 637.8045 (2025): 319-326.
+(see Prior Labs LICENSE)
+
+modifications to the architecture include:
+    - Adaption of architecture to handle multi label datasets
+    - direct encoding of labels through linear layer
+
 This is the original model before we switched to the multiple architecture arrangement.
 It is a single architecture which implements many different functionalities. Other
 architectures can import components from here to reuse them, and over time we should
@@ -14,8 +21,6 @@ from MultiLabelTabPFN.src.tabpfn.architectures.base.config import ModelConfig
 from MultiLabelTabPFN.src.tabpfn.architectures.base.encoders import (
     InputNormalizationEncoderStep,
     LinearInputEncoderStep,
-    MulticlassClassificationTargetEncoder,
-    MultiLabelClassificationTargetEncoder,
     NanHandlingEncoderStep,
     RemoveDuplicateFeaturesEncoderStep,
     RemoveEmptyFeaturesEncoderStep,
@@ -168,32 +173,6 @@ def get_encoder(  # noqa: PLR0913
 
     return SequentialEncoder(*encoder_steps, output_key="output")
 
-
-def get_y_encoder(
-    *,
-    num_inputs: int,
-    embedding_size: int,
-    nan_handling_y_encoder: bool,
-    max_num_labels: int,
-) -> nn.Module:
-    steps: list[SeqEncStep] = []
-    inputs_to_merge = [{"name": "main", "dim": num_inputs}]
-    if nan_handling_y_encoder:
-        steps += [NanHandlingEncoderStep()]
-        inputs_to_merge += [{"name": "nan_indicators", "dim": num_inputs}]
-
-    if max_num_labels >= 2:
-        steps += [MultiLabelClassificationTargetEncoder()]
-
-    steps += [
-        LinearInputEncoderStep(
-            num_features=sum([i["dim"] for i in inputs_to_merge]),  # type: ignore
-            emsize=embedding_size,
-            in_keys=tuple(i["name"] for i in inputs_to_merge),  # type: ignore
-            out_keys=("output",),
-        ),
-    ]
-    return SequentialEncoder(*steps, output_key="output")
 
 def get_y_encoder_mula(
     *,

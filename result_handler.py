@@ -1,4 +1,4 @@
-"""Utility Script for various predictive methods of TabPFN """
+"""Functions for saving of results and metrics for evaluations """
 
 # Setup Imports
 import pandas as pd
@@ -8,14 +8,22 @@ from sklearn.metrics import (
     precision_recall_curve,
     auc,
     average_precision_score,
-    roc_curve
 )
 from sklearn.preprocessing import LabelBinarizer
 
 from pathlib import Path
 
-def get_kfold(kf, X, Y):
 
+
+def get_kfold(kf, X, Y):
+    """
+    get the k fold partition of the dataset
+
+    :param kf: KFold partitioner
+    :param X: feature DataFrame
+    :param Y: target DataFrame
+    :return: 1d array of k folds
+    """
     kfolds = np.zeros((Y.shape[0], 1))
 
     k = 0
@@ -27,37 +35,28 @@ def get_kfold(kf, X, Y):
 
     return kfolds
 
-def save_results(y_pred, y_true, label, path="../prediction_results/"):
+def calc_labels(y_pred):
     """
-    Script to save the prediction results to a file for later evaluation
+    Returns the labels for a given probability matrix
 
-    :param y_pred: Predicted probabilities of the classes
-    :param y_true: true labels
-    :param label: name for the file without .csv attachement
-    :param path: path of directory where the file should be saved. Default
-    :return: Saving predictions and true labels into file
+    :param y_pred_probas: Probabilities of predictions
+    :return: np.ndarray of labels
     """
 
-    if y_true.shape[0] != y_pred.shape[0]:
-        raise Exception("True labels do not match predicted labels")
-
-    splt = label.split('/')[:-1]
-    sub_filepath = '/'.join(splt)
-
-    #print(sub_filepath)
-
-    Path(path + sub_filepath).mkdir(parents=True, exist_ok=True)
-
-    data = {"True": y_true}
-
-    for i, column in enumerate(y_pred.T):
-        data.update( {str(i): column })
-
-    df = pd.DataFrame(data)
-
-    df.to_csv(path + label + ".csv")
+    y_pred_probas = np.array(y_pred)
 
 
+    y_pred_new = np.zeros((y_pred_probas[0].shape[0], len(y_pred_probas)))
+
+
+    for j, clas in enumerate(y_pred_probas):
+        for i in range(clas.shape[0]):
+            if clas[i, 1] >= 0.5:
+                y_pred_new[i, j] = 1
+            else:
+                y_pred_new[i, j] = 0
+
+    return y_pred_new
 
 def save_multilabel(y_pred, y_true, label, k_folds=None, path="../prediction_results/"):
     """
@@ -76,7 +75,7 @@ def save_multilabel(y_pred, y_true, label, k_folds=None, path="../prediction_res
     splt = label.split('/')[:-1]
     sub_filepath = '/'.join(splt)
 
-    #print(sub_filepath)
+
 
     Path(path + sub_filepath).mkdir(parents=True, exist_ok=True)
 
@@ -109,9 +108,6 @@ def save_multilabel_proba(y_pred_probas, y_true, label, k_folds=None, path="../p
 
     drugs = y_true.columns.values.tolist()
 
-    print(drugs)
-    print(y_pred_probas.shape)
-
 
     for i, probas in enumerate(y_pred_probas):
         y_pred_dict.update({drugs[i]: probas[:, 1]})
@@ -126,7 +122,7 @@ def save_multilabel_proba(y_pred_probas, y_true, label, k_folds=None, path="../p
     splt = label.split('/')[:-1]
     sub_filepath = '/'.join(splt)
 
-    #print(sub_filepath)
+
 
     Path(path + sub_filepath).mkdir(parents=True, exist_ok=True)
 
@@ -145,36 +141,11 @@ def save_multilabel_proba(y_pred_probas, y_true, label, k_folds=None, path="../p
     df.to_csv(path + label + ".csv")
 
 
-def calc_labels(y_pred):
-    """
-    Returns the labels for a given probability matrix
-
-    :param y_pred_probas: Probabilities of predictions
-    :return: np.ndarray of labels
-    """
-
-    y_pred_probas = np.array(y_pred)
-
-
-    y_pred_new = np.zeros((y_pred_probas[0].shape[0], len(y_pred_probas)))
-
-    #print(y_pred_new)
-
-    for j, clas in enumerate(y_pred_probas):
-        for i in range(clas.shape[0]):
-            if clas[i, 1] >= 0.5:
-                y_pred_new[i, j] = 1
-            else:
-                y_pred_new[i, j] = 0
-
-    return y_pred_new
-
-
 def save_ensemble(y_pred_ensemble, y_true, label, k_folds=None, path="../prediction_results/"):
     """
-    Script to save the prediction probabilities for each label, binary only
+    Script to save the prediction labels for each label, binary only for ensembles
 
-    :param y_pred_probas: Probabilities of predictions
+    :param y_pred_ensemble: labels of predictions
     :param y_true: true labels
     :param label: name for the file without .csv attachement
     :param k_folds: array with sequence of k_folds
@@ -211,9 +182,9 @@ def save_ensemble(y_pred_ensemble, y_true, label, k_folds=None, path="../predict
 
 def save_ensemble_proba(y_pred_probas_ensemble, y_true, label, k_folds=None, path="../prediction_results/"):
     """
-    Script to save the prediction probabilities for each label, binary only
+    Script to save the prediction probabilities for each label, binary only for ensembles
 
-    :param y_pred_probas: Probabilities of predictions
+    :param y_pred_probas_ensemble: Probabilities of predictions
     :param y_true: true labels
     :param label: name for the file without .csv attachement
     :param k_folds: array with sequence of k_folds
@@ -252,24 +223,22 @@ def save_ensemble_proba(y_pred_probas_ensemble, y_true, label, k_folds=None, pat
         df.to_csv(path + label + "/Ensemble_probas_" + str(j) + ".csv")
 
 
-
-"""
-Scores concerning Multilabel prediction:
-"""
-
 """
 Scores concerning Multilabel prediction:
 """
 
 def calc_metrics(paths, models, metric, metric_args, ending="", drop_na=True, return_groups=False):
     """
-    Calculating AUC PRC for binary and multiclass setting. OVR multiclass setting
-    was adapted from https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html
+    Calculating the metrics of multiple models at once
 
-    :param y_true: True labels
-    :param y_score: Predicted labels
-    :param multiclass: which mode of multiclass to use
-    :return: prc score
+    :param paths: list of paths to the datasets result
+    :param models: models file names to be evaluated
+    :param metric: metric to be used
+    :param metric_args: arguments to be passed to the evaluation metric as a dictionary
+    :param ending: filename ending of the models
+    :param drop_na: dropping NA values before evaluation
+    :param return_groups: if True, does not return means and std per model, but all means of the corss validation
+    :return: means and stds
     """
     means = {}
     stds = {}
@@ -413,7 +382,7 @@ def subset_acc(y_true, y_pred, nan_mode="warning"):
 
 def exam_acc(y_true, y_pred, nan_mode="warning"):
     """
-    Calculates the subset accuracy for multilabel prediction
+    Calculates the example accuracy for multilabel prediction
 
     :param y_pred: Predicted labels
     :param y_true: true labels

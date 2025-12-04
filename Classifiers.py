@@ -8,7 +8,6 @@ import collections
 import warnings
 from tabpfn import TabPFNClassifier
 
-import utils
 
 from sklearn.base import BaseEstimator, ClassifierMixin
 

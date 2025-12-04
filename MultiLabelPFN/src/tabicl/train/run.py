@@ -1,3 +1,11 @@
+"""
+Modifications include:
+    - changes in script to train multi label learning
+    - implementation of zlpr loss function by Su, Jianlin, et al. "Zlpr: A novel loss for multi-label classification." arXiv preprint arXiv:2208.02955 (2022).
+    - parameters for the switch of the architecture for label encoding
+    - new label encoder and decoder finetuning method
+"""
+
 from __future__ import annotations
 
 import os
@@ -26,6 +34,9 @@ from tabicl.prior.dataset import PriorDataset
 from tabicl.prior.genload import LoadPriorDataset
 from tabicl.train.optim import get_scheduler
 from tabicl.train.train_config import build_parser
+
+
+
 
 warnings.filterwarnings(
     "ignore", message=".*The PyTorch API of nested tensors is in prototype stage.*", category=UserWarning

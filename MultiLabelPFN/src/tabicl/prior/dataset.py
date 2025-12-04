@@ -3,6 +3,16 @@ Modified data generation of:
 
 Qu, Jingang, et al. "Tabicl: A tabular foundation model for in-context learning on large data." arXiv preprint arXiv:2502.05564 (2025).
 
+Modifications include:
+    - exchanged parameter "max_classes" with "max_labels"
+    - Adding the "min_quan" and "max_quan" parameters to control the quantiles range for sampling
+    - Adding "cat_probability" parameter to control the probability for categorical features in a dataset
+    - Changing parameters at line 671 to include "num_outputs", "max_labels", "min_quan" and "max_quan"
+    - Addition of Multi Label class assigner to reg2cls.py
+    - Dataset padding of label dimension
+
+
+
 The module offers a flexible framework for creating diverse, realistic multilabel tabular dataset
 with controlled properties, which can be used for training and evaluating in-context
 learning models. Key features include:

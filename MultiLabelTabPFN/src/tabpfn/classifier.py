@@ -1,17 +1,8 @@
 """TabPFNClassifier class.
 
-!!! example
-    ```python
-    import sklearn.datasets
-    from MultiLabelTabPFN.src.tabpfn import TabPFNClassifier
+Modified version of the TabPFN classifier (see "Prior Labs LICENSE") to handle Multi Label data
+changed activation function to sigmoid from softmax
 
-    model = TabPFNClassifier()
-
-    X, y = sklearn.datasets.load_iris(return_X_y=True)
-
-    model.fit(X, y)
-    predictions = model.predict(X)
-    ```
 """
 
 #  Copyright (c) Prior Labs GmbH 2025.

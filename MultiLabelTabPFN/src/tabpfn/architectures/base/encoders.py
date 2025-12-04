@@ -1058,33 +1058,3 @@ class MulticlassClassificationTargetEncoder(SeqEncStep):
         for B in range(y.shape[1]):
             y_new[:, B, :] = self.flatten_targets(y[:, B, :], self.unique_ys_[B])
         return (y_new,)
-
-
-class MultiLabelClassificationTargetEncoder(SeqEncStep):
-    def __init__(self, **kwargs: Any):
-        super().__init__(**kwargs)
-        self.num_labels_ = None
-
-    def _fit(self, y: torch.Tensor, single_eval_pos: int, **kwargs: Any) -> None:
-        assert len(y.shape) == 3, "y must be of shape (T, B, L)"
-        self.num_labels_ = y.shape[-1]
-
-    @staticmethod
-    def flatten_targets(
-        y: torch.Tensor, unique_ys: torch.Tensor | None = None
-    ) -> torch.Tensor:
-        if unique_ys is None:
-            unique_ys = torch.unique(y)
-        return (y.unsqueeze(-1) > unique_ys).sum(axis=-1)
-
-    def _transform(
-        self, y: torch.Tensor, single_eval_pos: int | None = None
-    ) -> tuple[torch.Tensor]:
-        assert len(y.shape) == 3, "y must be of shape (T, B, L)"
-        assert not (y.isnan().any() and self.training), (
-            "NaNs are not allowed in the target at this point during training (set to model.eval() if not in training)"
-        )
-        y_new = y.clone()
-        for B in range(y.shape[1]):
-            y_new[:, B, :] = self.flatten_targets(y[:, B, :], self.unique_ys_[B])
-        return (y_new,)
